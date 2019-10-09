@@ -1,0 +1,28 @@
+//
+//  Authors
+//    github.com/luncliff (luncliff@gmail.com)
+//
+//  See Also
+//    https://developers.google.com/protocol-buffers/docs/proto3
+//    scripts/run_protoc.sh
+//
+syntax = "proto3";
+
+// import "google/protobuf/empty.proto";
+
+package scheduler;
+
+message Request1 {
+  string message = 1;
+}
+message Response1 {
+    string message = 1;
+}
+
+service Scheduler1 {
+  rpc Once(Request1) returns (Response1) {
+  }
+  rpc Stream(Request1) returns (stream Response1) {
+  }
+}
+
