@@ -3,12 +3,11 @@
 // source: service.proto
 // Original file comments:
 //
-//  Authors
+//  Author
 //    github.com/luncliff (luncliff@gmail.com)
 //
 //  See Also
 //    https://developers.google.com/protocol-buffers/docs/proto3
-//    scripts/run_protoc.sh
 //
 #ifndef GRPC_service_2eproto__INCLUDED
 #define GRPC_service_2eproto__INCLUDED
@@ -45,76 +44,122 @@ class MessageAllocator;
 }  // namespace experimental
 }  // namespace grpc
 
-namespace scheduler {
+namespace plugins {
 
-class Scheduler1 final {
+class Executor1 final {
  public:
   static constexpr char const* service_full_name() {
-    return "scheduler.Scheduler1";
+    return "plugins.Executor1";
   }
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    virtual ::grpc::Status Once(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::scheduler::Response1* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::scheduler::Response1>> AsyncOnce(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::scheduler::Response1>>(AsyncOnceRaw(context, request, cq));
+    virtual ::grpc::Status Invoke1(::grpc::ClientContext* context, const ::plugins::Request1& request, ::plugins::Response1* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::plugins::Response1>> AsyncInvoke1(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::plugins::Response1>>(AsyncInvoke1Raw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::scheduler::Response1>> PrepareAsyncOnce(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::scheduler::Response1>>(PrepareAsyncOnceRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::plugins::Response1>> PrepareAsyncInvoke1(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::plugins::Response1>>(PrepareAsyncInvoke1Raw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientReaderInterface< ::scheduler::Response1>> Stream(::grpc::ClientContext* context, const ::scheduler::Request1& request) {
-      return std::unique_ptr< ::grpc::ClientReaderInterface< ::scheduler::Response1>>(StreamRaw(context, request));
+    std::unique_ptr< ::grpc::ClientReaderInterface< ::plugins::Response1>> Invoke2(::grpc::ClientContext* context, const ::plugins::Request1& request) {
+      return std::unique_ptr< ::grpc::ClientReaderInterface< ::plugins::Response1>>(Invoke2Raw(context, request));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::scheduler::Response1>> AsyncStream(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::scheduler::Response1>>(AsyncStreamRaw(context, request, cq, tag));
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::plugins::Response1>> AsyncInvoke2(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::plugins::Response1>>(AsyncInvoke2Raw(context, request, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::scheduler::Response1>> PrepareAsyncStream(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::scheduler::Response1>>(PrepareAsyncStreamRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::plugins::Response1>> PrepareAsyncInvoke2(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::plugins::Response1>>(PrepareAsyncInvoke2Raw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientWriterInterface< ::plugins::Request1>> Invoke3(::grpc::ClientContext* context, ::plugins::Response1* response) {
+      return std::unique_ptr< ::grpc::ClientWriterInterface< ::plugins::Request1>>(Invoke3Raw(context, response));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::plugins::Request1>> AsyncInvoke3(::grpc::ClientContext* context, ::plugins::Response1* response, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::plugins::Request1>>(AsyncInvoke3Raw(context, response, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::plugins::Request1>> PrepareAsyncInvoke3(::grpc::ClientContext* context, ::plugins::Response1* response, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncWriterInterface< ::plugins::Request1>>(PrepareAsyncInvoke3Raw(context, response, cq));
+    }
+    std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::plugins::Request1, ::plugins::Response1>> Invoke4(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriterInterface< ::plugins::Request1, ::plugins::Response1>>(Invoke4Raw(context));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::plugins::Request1, ::plugins::Response1>> AsyncInvoke4(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::plugins::Request1, ::plugins::Response1>>(AsyncInvoke4Raw(context, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::plugins::Request1, ::plugins::Response1>> PrepareAsyncInvoke4(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriterInterface< ::plugins::Request1, ::plugins::Response1>>(PrepareAsyncInvoke4Raw(context, cq));
     }
     class experimental_async_interface {
      public:
       virtual ~experimental_async_interface() {}
-      virtual void Once(::grpc::ClientContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void Once(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::scheduler::Response1* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void Once(::grpc::ClientContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
-      virtual void Once(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::scheduler::Response1* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
-      virtual void Stream(::grpc::ClientContext* context, ::scheduler::Request1* request, ::grpc::experimental::ClientReadReactor< ::scheduler::Response1>* reactor) = 0;
+      virtual void Invoke1(::grpc::ClientContext* context, const ::plugins::Request1* request, ::plugins::Response1* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Invoke1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::plugins::Response1* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Invoke1(::grpc::ClientContext* context, const ::plugins::Request1* request, ::plugins::Response1* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void Invoke1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::plugins::Response1* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void Invoke2(::grpc::ClientContext* context, ::plugins::Request1* request, ::grpc::experimental::ClientReadReactor< ::plugins::Response1>* reactor) = 0;
+      virtual void Invoke3(::grpc::ClientContext* context, ::plugins::Response1* response, ::grpc::experimental::ClientWriteReactor< ::plugins::Request1>* reactor) = 0;
+      virtual void Invoke4(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::plugins::Request1,::plugins::Response1>* reactor) = 0;
     };
     virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::scheduler::Response1>* AsyncOnceRaw(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::scheduler::Response1>* PrepareAsyncOnceRaw(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientReaderInterface< ::scheduler::Response1>* StreamRaw(::grpc::ClientContext* context, const ::scheduler::Request1& request) = 0;
-    virtual ::grpc::ClientAsyncReaderInterface< ::scheduler::Response1>* AsyncStreamRaw(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
-    virtual ::grpc::ClientAsyncReaderInterface< ::scheduler::Response1>* PrepareAsyncStreamRaw(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::plugins::Response1>* AsyncInvoke1Raw(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::plugins::Response1>* PrepareAsyncInvoke1Raw(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderInterface< ::plugins::Response1>* Invoke2Raw(::grpc::ClientContext* context, const ::plugins::Request1& request) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::plugins::Response1>* AsyncInvoke2Raw(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::plugins::Response1>* PrepareAsyncInvoke2Raw(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientWriterInterface< ::plugins::Request1>* Invoke3Raw(::grpc::ClientContext* context, ::plugins::Response1* response) = 0;
+    virtual ::grpc::ClientAsyncWriterInterface< ::plugins::Request1>* AsyncInvoke3Raw(::grpc::ClientContext* context, ::plugins::Response1* response, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncWriterInterface< ::plugins::Request1>* PrepareAsyncInvoke3Raw(::grpc::ClientContext* context, ::plugins::Response1* response, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderWriterInterface< ::plugins::Request1, ::plugins::Response1>* Invoke4Raw(::grpc::ClientContext* context) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::plugins::Request1, ::plugins::Response1>* AsyncInvoke4Raw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderWriterInterface< ::plugins::Request1, ::plugins::Response1>* PrepareAsyncInvoke4Raw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
-    ::grpc::Status Once(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::scheduler::Response1* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::scheduler::Response1>> AsyncOnce(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::scheduler::Response1>>(AsyncOnceRaw(context, request, cq));
+    ::grpc::Status Invoke1(::grpc::ClientContext* context, const ::plugins::Request1& request, ::plugins::Response1* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::plugins::Response1>> AsyncInvoke1(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::plugins::Response1>>(AsyncInvoke1Raw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::scheduler::Response1>> PrepareAsyncOnce(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::scheduler::Response1>>(PrepareAsyncOnceRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::plugins::Response1>> PrepareAsyncInvoke1(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::plugins::Response1>>(PrepareAsyncInvoke1Raw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientReader< ::scheduler::Response1>> Stream(::grpc::ClientContext* context, const ::scheduler::Request1& request) {
-      return std::unique_ptr< ::grpc::ClientReader< ::scheduler::Response1>>(StreamRaw(context, request));
+    std::unique_ptr< ::grpc::ClientReader< ::plugins::Response1>> Invoke2(::grpc::ClientContext* context, const ::plugins::Request1& request) {
+      return std::unique_ptr< ::grpc::ClientReader< ::plugins::Response1>>(Invoke2Raw(context, request));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReader< ::scheduler::Response1>> AsyncStream(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReader< ::scheduler::Response1>>(AsyncStreamRaw(context, request, cq, tag));
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::plugins::Response1>> AsyncInvoke2(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::plugins::Response1>>(AsyncInvoke2Raw(context, request, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReader< ::scheduler::Response1>> PrepareAsyncStream(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReader< ::scheduler::Response1>>(PrepareAsyncStreamRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::plugins::Response1>> PrepareAsyncInvoke2(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::plugins::Response1>>(PrepareAsyncInvoke2Raw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientWriter< ::plugins::Request1>> Invoke3(::grpc::ClientContext* context, ::plugins::Response1* response) {
+      return std::unique_ptr< ::grpc::ClientWriter< ::plugins::Request1>>(Invoke3Raw(context, response));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncWriter< ::plugins::Request1>> AsyncInvoke3(::grpc::ClientContext* context, ::plugins::Response1* response, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncWriter< ::plugins::Request1>>(AsyncInvoke3Raw(context, response, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncWriter< ::plugins::Request1>> PrepareAsyncInvoke3(::grpc::ClientContext* context, ::plugins::Response1* response, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncWriter< ::plugins::Request1>>(PrepareAsyncInvoke3Raw(context, response, cq));
+    }
+    std::unique_ptr< ::grpc::ClientReaderWriter< ::plugins::Request1, ::plugins::Response1>> Invoke4(::grpc::ClientContext* context) {
+      return std::unique_ptr< ::grpc::ClientReaderWriter< ::plugins::Request1, ::plugins::Response1>>(Invoke4Raw(context));
+    }
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::plugins::Request1, ::plugins::Response1>> AsyncInvoke4(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::plugins::Request1, ::plugins::Response1>>(AsyncInvoke4Raw(context, cq, tag));
+    }
+    std::unique_ptr<  ::grpc::ClientAsyncReaderWriter< ::plugins::Request1, ::plugins::Response1>> PrepareAsyncInvoke4(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderWriter< ::plugins::Request1, ::plugins::Response1>>(PrepareAsyncInvoke4Raw(context, cq));
     }
     class experimental_async final :
       public StubInterface::experimental_async_interface {
      public:
-      void Once(::grpc::ClientContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response, std::function<void(::grpc::Status)>) override;
-      void Once(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::scheduler::Response1* response, std::function<void(::grpc::Status)>) override;
-      void Once(::grpc::ClientContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
-      void Once(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::scheduler::Response1* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
-      void Stream(::grpc::ClientContext* context, ::scheduler::Request1* request, ::grpc::experimental::ClientReadReactor< ::scheduler::Response1>* reactor) override;
+      void Invoke1(::grpc::ClientContext* context, const ::plugins::Request1* request, ::plugins::Response1* response, std::function<void(::grpc::Status)>) override;
+      void Invoke1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::plugins::Response1* response, std::function<void(::grpc::Status)>) override;
+      void Invoke1(::grpc::ClientContext* context, const ::plugins::Request1* request, ::plugins::Response1* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void Invoke1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::plugins::Response1* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void Invoke2(::grpc::ClientContext* context, ::plugins::Request1* request, ::grpc::experimental::ClientReadReactor< ::plugins::Response1>* reactor) override;
+      void Invoke3(::grpc::ClientContext* context, ::plugins::Response1* response, ::grpc::experimental::ClientWriteReactor< ::plugins::Request1>* reactor) override;
+      void Invoke4(::grpc::ClientContext* context, ::grpc::experimental::ClientBidiReactor< ::plugins::Request1,::plugins::Response1>* reactor) override;
      private:
       friend class Stub;
       explicit experimental_async(Stub* stub): stub_(stub) { }
@@ -126,13 +171,21 @@ class Scheduler1 final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class experimental_async async_stub_{this};
-    ::grpc::ClientAsyncResponseReader< ::scheduler::Response1>* AsyncOnceRaw(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::scheduler::Response1>* PrepareAsyncOnceRaw(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientReader< ::scheduler::Response1>* StreamRaw(::grpc::ClientContext* context, const ::scheduler::Request1& request) override;
-    ::grpc::ClientAsyncReader< ::scheduler::Response1>* AsyncStreamRaw(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq, void* tag) override;
-    ::grpc::ClientAsyncReader< ::scheduler::Response1>* PrepareAsyncStreamRaw(::grpc::ClientContext* context, const ::scheduler::Request1& request, ::grpc::CompletionQueue* cq) override;
-    const ::grpc::internal::RpcMethod rpcmethod_Once_;
-    const ::grpc::internal::RpcMethod rpcmethod_Stream_;
+    ::grpc::ClientAsyncResponseReader< ::plugins::Response1>* AsyncInvoke1Raw(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::plugins::Response1>* PrepareAsyncInvoke1Raw(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReader< ::plugins::Response1>* Invoke2Raw(::grpc::ClientContext* context, const ::plugins::Request1& request) override;
+    ::grpc::ClientAsyncReader< ::plugins::Response1>* AsyncInvoke2Raw(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReader< ::plugins::Response1>* PrepareAsyncInvoke2Raw(::grpc::ClientContext* context, const ::plugins::Request1& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientWriter< ::plugins::Request1>* Invoke3Raw(::grpc::ClientContext* context, ::plugins::Response1* response) override;
+    ::grpc::ClientAsyncWriter< ::plugins::Request1>* AsyncInvoke3Raw(::grpc::ClientContext* context, ::plugins::Response1* response, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncWriter< ::plugins::Request1>* PrepareAsyncInvoke3Raw(::grpc::ClientContext* context, ::plugins::Response1* response, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReaderWriter< ::plugins::Request1, ::plugins::Response1>* Invoke4Raw(::grpc::ClientContext* context) override;
+    ::grpc::ClientAsyncReaderWriter< ::plugins::Request1, ::plugins::Response1>* AsyncInvoke4Raw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReaderWriter< ::plugins::Request1, ::plugins::Response1>* PrepareAsyncInvoke4Raw(::grpc::ClientContext* context, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_Invoke1_;
+    const ::grpc::internal::RpcMethod rpcmethod_Invoke2_;
+    const ::grpc::internal::RpcMethod rpcmethod_Invoke3_;
+    const ::grpc::internal::RpcMethod rpcmethod_Invoke4_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -140,271 +193,475 @@ class Scheduler1 final {
    public:
     Service();
     virtual ~Service();
-    virtual ::grpc::Status Once(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response);
-    virtual ::grpc::Status Stream(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::grpc::ServerWriter< ::scheduler::Response1>* writer);
+    virtual ::grpc::Status Invoke1(::grpc::ServerContext* context, const ::plugins::Request1* request, ::plugins::Response1* response);
+    virtual ::grpc::Status Invoke2(::grpc::ServerContext* context, const ::plugins::Request1* request, ::grpc::ServerWriter< ::plugins::Response1>* writer);
+    virtual ::grpc::Status Invoke3(::grpc::ServerContext* context, ::grpc::ServerReader< ::plugins::Request1>* reader, ::plugins::Response1* response);
+    virtual ::grpc::Status Invoke4(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::plugins::Response1, ::plugins::Request1>* stream);
   };
   template <class BaseClass>
-  class WithAsyncMethod_Once : public BaseClass {
+  class WithAsyncMethod_Invoke1 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    WithAsyncMethod_Once() {
+    WithAsyncMethod_Invoke1() {
       ::grpc::Service::MarkMethodAsync(0);
     }
-    ~WithAsyncMethod_Once() override {
+    ~WithAsyncMethod_Invoke1() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Once(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response) override {
+    ::grpc::Status Invoke1(::grpc::ServerContext* context, const ::plugins::Request1* request, ::plugins::Response1* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestOnce(::grpc::ServerContext* context, ::scheduler::Request1* request, ::grpc::ServerAsyncResponseWriter< ::scheduler::Response1>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestInvoke1(::grpc::ServerContext* context, ::plugins::Request1* request, ::grpc::ServerAsyncResponseWriter< ::plugins::Response1>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_Stream : public BaseClass {
+  class WithAsyncMethod_Invoke2 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    WithAsyncMethod_Stream() {
+    WithAsyncMethod_Invoke2() {
       ::grpc::Service::MarkMethodAsync(1);
     }
-    ~WithAsyncMethod_Stream() override {
+    ~WithAsyncMethod_Invoke2() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Stream(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::grpc::ServerWriter< ::scheduler::Response1>* writer) override {
+    ::grpc::Status Invoke2(::grpc::ServerContext* context, const ::plugins::Request1* request, ::grpc::ServerWriter< ::plugins::Response1>* writer) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestStream(::grpc::ServerContext* context, ::scheduler::Request1* request, ::grpc::ServerAsyncWriter< ::scheduler::Response1>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestInvoke2(::grpc::ServerContext* context, ::plugins::Request1* request, ::grpc::ServerAsyncWriter< ::plugins::Response1>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncServerStreaming(1, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_Once<WithAsyncMethod_Stream<Service > > AsyncService;
   template <class BaseClass>
-  class ExperimentalWithCallbackMethod_Once : public BaseClass {
+  class WithAsyncMethod_Invoke3 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    ExperimentalWithCallbackMethod_Once() {
+    WithAsyncMethod_Invoke3() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_Invoke3() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Invoke3(::grpc::ServerContext* context, ::grpc::ServerReader< ::plugins::Request1>* reader, ::plugins::Response1* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestInvoke3(::grpc::ServerContext* context, ::grpc::ServerAsyncReader< ::plugins::Response1, ::plugins::Request1>* reader, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncClientStreaming(2, context, reader, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_Invoke4 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithAsyncMethod_Invoke4() {
+      ::grpc::Service::MarkMethodAsync(3);
+    }
+    ~WithAsyncMethod_Invoke4() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Invoke4(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::plugins::Response1, ::plugins::Request1>* stream)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestInvoke4(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::plugins::Response1, ::plugins::Request1>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(3, context, stream, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_Invoke1<WithAsyncMethod_Invoke2<WithAsyncMethod_Invoke3<WithAsyncMethod_Invoke4<Service > > > > AsyncService;
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_Invoke1 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithCallbackMethod_Invoke1() {
       ::grpc::Service::experimental().MarkMethodCallback(0,
-        new ::grpc_impl::internal::CallbackUnaryHandler< ::scheduler::Request1, ::scheduler::Response1>(
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::plugins::Request1, ::plugins::Response1>(
           [this](::grpc::ServerContext* context,
-                 const ::scheduler::Request1* request,
-                 ::scheduler::Response1* response,
+                 const ::plugins::Request1* request,
+                 ::plugins::Response1* response,
                  ::grpc::experimental::ServerCallbackRpcController* controller) {
-                   return this->Once(context, request, response, controller);
+                   return this->Invoke1(context, request, response, controller);
                  }));
     }
-    void SetMessageAllocatorFor_Once(
-        ::grpc::experimental::MessageAllocator< ::scheduler::Request1, ::scheduler::Response1>* allocator) {
-      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::scheduler::Request1, ::scheduler::Response1>*>(
+    void SetMessageAllocatorFor_Invoke1(
+        ::grpc::experimental::MessageAllocator< ::plugins::Request1, ::plugins::Response1>* allocator) {
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::plugins::Request1, ::plugins::Response1>*>(
           ::grpc::Service::experimental().GetHandler(0))
               ->SetMessageAllocator(allocator);
     }
-    ~ExperimentalWithCallbackMethod_Once() override {
+    ~ExperimentalWithCallbackMethod_Invoke1() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Once(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response) override {
+    ::grpc::Status Invoke1(::grpc::ServerContext* context, const ::plugins::Request1* request, ::plugins::Response1* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual void Once(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+    virtual void Invoke1(::grpc::ServerContext* context, const ::plugins::Request1* request, ::plugins::Response1* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
   };
   template <class BaseClass>
-  class ExperimentalWithCallbackMethod_Stream : public BaseClass {
+  class ExperimentalWithCallbackMethod_Invoke2 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    ExperimentalWithCallbackMethod_Stream() {
+    ExperimentalWithCallbackMethod_Invoke2() {
       ::grpc::Service::experimental().MarkMethodCallback(1,
-        new ::grpc_impl::internal::CallbackServerStreamingHandler< ::scheduler::Request1, ::scheduler::Response1>(
-          [this] { return this->Stream(); }));
+        new ::grpc_impl::internal::CallbackServerStreamingHandler< ::plugins::Request1, ::plugins::Response1>(
+          [this] { return this->Invoke2(); }));
     }
-    ~ExperimentalWithCallbackMethod_Stream() override {
+    ~ExperimentalWithCallbackMethod_Invoke2() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Stream(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::grpc::ServerWriter< ::scheduler::Response1>* writer) override {
+    ::grpc::Status Invoke2(::grpc::ServerContext* context, const ::plugins::Request1* request, ::grpc::ServerWriter< ::plugins::Response1>* writer) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::experimental::ServerWriteReactor< ::scheduler::Request1, ::scheduler::Response1>* Stream() {
+    virtual ::grpc::experimental::ServerWriteReactor< ::plugins::Request1, ::plugins::Response1>* Invoke2() {
       return new ::grpc_impl::internal::UnimplementedWriteReactor<
-        ::scheduler::Request1, ::scheduler::Response1>;}
+        ::plugins::Request1, ::plugins::Response1>;}
   };
-  typedef ExperimentalWithCallbackMethod_Once<ExperimentalWithCallbackMethod_Stream<Service > > ExperimentalCallbackService;
   template <class BaseClass>
-  class WithGenericMethod_Once : public BaseClass {
+  class ExperimentalWithCallbackMethod_Invoke3 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    WithGenericMethod_Once() {
+    ExperimentalWithCallbackMethod_Invoke3() {
+      ::grpc::Service::experimental().MarkMethodCallback(2,
+        new ::grpc_impl::internal::CallbackClientStreamingHandler< ::plugins::Request1, ::plugins::Response1>(
+          [this] { return this->Invoke3(); }));
+    }
+    ~ExperimentalWithCallbackMethod_Invoke3() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Invoke3(::grpc::ServerContext* context, ::grpc::ServerReader< ::plugins::Request1>* reader, ::plugins::Response1* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::experimental::ServerReadReactor< ::plugins::Request1, ::plugins::Response1>* Invoke3() {
+      return new ::grpc_impl::internal::UnimplementedReadReactor<
+        ::plugins::Request1, ::plugins::Response1>;}
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_Invoke4 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithCallbackMethod_Invoke4() {
+      ::grpc::Service::experimental().MarkMethodCallback(3,
+        new ::grpc_impl::internal::CallbackBidiHandler< ::plugins::Request1, ::plugins::Response1>(
+          [this] { return this->Invoke4(); }));
+    }
+    ~ExperimentalWithCallbackMethod_Invoke4() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Invoke4(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::plugins::Response1, ::plugins::Request1>* stream)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::experimental::ServerBidiReactor< ::plugins::Request1, ::plugins::Response1>* Invoke4() {
+      return new ::grpc_impl::internal::UnimplementedBidiReactor<
+        ::plugins::Request1, ::plugins::Response1>;}
+  };
+  typedef ExperimentalWithCallbackMethod_Invoke1<ExperimentalWithCallbackMethod_Invoke2<ExperimentalWithCallbackMethod_Invoke3<ExperimentalWithCallbackMethod_Invoke4<Service > > > > ExperimentalCallbackService;
+  template <class BaseClass>
+  class WithGenericMethod_Invoke1 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithGenericMethod_Invoke1() {
       ::grpc::Service::MarkMethodGeneric(0);
     }
-    ~WithGenericMethod_Once() override {
+    ~WithGenericMethod_Invoke1() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Once(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response) override {
+    ::grpc::Status Invoke1(::grpc::ServerContext* context, const ::plugins::Request1* request, ::plugins::Response1* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_Stream : public BaseClass {
+  class WithGenericMethod_Invoke2 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    WithGenericMethod_Stream() {
+    WithGenericMethod_Invoke2() {
       ::grpc::Service::MarkMethodGeneric(1);
     }
-    ~WithGenericMethod_Stream() override {
+    ~WithGenericMethod_Invoke2() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Stream(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::grpc::ServerWriter< ::scheduler::Response1>* writer) override {
+    ::grpc::Status Invoke2(::grpc::ServerContext* context, const ::plugins::Request1* request, ::grpc::ServerWriter< ::plugins::Response1>* writer) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
   };
   template <class BaseClass>
-  class WithRawMethod_Once : public BaseClass {
+  class WithGenericMethod_Invoke3 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    WithRawMethod_Once() {
-      ::grpc::Service::MarkMethodRaw(0);
+    WithGenericMethod_Invoke3() {
+      ::grpc::Service::MarkMethodGeneric(2);
     }
-    ~WithRawMethod_Once() override {
+    ~WithGenericMethod_Invoke3() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Once(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response) override {
+    ::grpc::Status Invoke3(::grpc::ServerContext* context, ::grpc::ServerReader< ::plugins::Request1>* reader, ::plugins::Response1* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestOnce(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+  };
+  template <class BaseClass>
+  class WithGenericMethod_Invoke4 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithGenericMethod_Invoke4() {
+      ::grpc::Service::MarkMethodGeneric(3);
+    }
+    ~WithGenericMethod_Invoke4() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Invoke4(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::plugins::Response1, ::plugins::Request1>* stream)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Invoke1 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithRawMethod_Invoke1() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_Invoke1() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Invoke1(::grpc::ServerContext* context, const ::plugins::Request1* request, ::plugins::Response1* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestInvoke1(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class WithRawMethod_Stream : public BaseClass {
+  class WithRawMethod_Invoke2 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    WithRawMethod_Stream() {
+    WithRawMethod_Invoke2() {
       ::grpc::Service::MarkMethodRaw(1);
     }
-    ~WithRawMethod_Stream() override {
+    ~WithRawMethod_Invoke2() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Stream(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::grpc::ServerWriter< ::scheduler::Response1>* writer) override {
+    ::grpc::Status Invoke2(::grpc::ServerContext* context, const ::plugins::Request1* request, ::grpc::ServerWriter< ::plugins::Response1>* writer) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestStream(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestInvoke2(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncServerStreaming(1, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod_Once : public BaseClass {
+  class WithRawMethod_Invoke3 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    ExperimentalWithRawCallbackMethod_Once() {
+    WithRawMethod_Invoke3() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_Invoke3() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Invoke3(::grpc::ServerContext* context, ::grpc::ServerReader< ::plugins::Request1>* reader, ::plugins::Response1* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestInvoke3(::grpc::ServerContext* context, ::grpc::ServerAsyncReader< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* reader, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncClientStreaming(2, context, reader, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_Invoke4 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithRawMethod_Invoke4() {
+      ::grpc::Service::MarkMethodRaw(3);
+    }
+    ~WithRawMethod_Invoke4() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Invoke4(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::plugins::Response1, ::plugins::Request1>* stream)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestInvoke4(::grpc::ServerContext* context, ::grpc::ServerAsyncReaderWriter< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* stream, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncBidiStreaming(3, context, stream, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_Invoke1 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithRawCallbackMethod_Invoke1() {
       ::grpc::Service::experimental().MarkMethodRawCallback(0,
         new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
           [this](::grpc::ServerContext* context,
                  const ::grpc::ByteBuffer* request,
                  ::grpc::ByteBuffer* response,
                  ::grpc::experimental::ServerCallbackRpcController* controller) {
-                   this->Once(context, request, response, controller);
+                   this->Invoke1(context, request, response, controller);
                  }));
     }
-    ~ExperimentalWithRawCallbackMethod_Once() override {
+    ~ExperimentalWithRawCallbackMethod_Invoke1() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Once(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response) override {
+    ::grpc::Status Invoke1(::grpc::ServerContext* context, const ::plugins::Request1* request, ::plugins::Response1* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual void Once(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+    virtual void Invoke1(::grpc::ServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
   };
   template <class BaseClass>
-  class ExperimentalWithRawCallbackMethod_Stream : public BaseClass {
+  class ExperimentalWithRawCallbackMethod_Invoke2 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    ExperimentalWithRawCallbackMethod_Stream() {
+    ExperimentalWithRawCallbackMethod_Invoke2() {
       ::grpc::Service::experimental().MarkMethodRawCallback(1,
         new ::grpc_impl::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-          [this] { return this->Stream(); }));
+          [this] { return this->Invoke2(); }));
     }
-    ~ExperimentalWithRawCallbackMethod_Stream() override {
+    ~ExperimentalWithRawCallbackMethod_Invoke2() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Stream(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::grpc::ServerWriter< ::scheduler::Response1>* writer) override {
+    ::grpc::Status Invoke2(::grpc::ServerContext* context, const ::plugins::Request1* request, ::grpc::ServerWriter< ::plugins::Response1>* writer) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::experimental::ServerWriteReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* Stream() {
+    virtual ::grpc::experimental::ServerWriteReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* Invoke2() {
       return new ::grpc_impl::internal::UnimplementedWriteReactor<
         ::grpc::ByteBuffer, ::grpc::ByteBuffer>;}
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_Once : public BaseClass {
+  class ExperimentalWithRawCallbackMethod_Invoke3 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    WithStreamedUnaryMethod_Once() {
-      ::grpc::Service::MarkMethodStreamed(0,
-        new ::grpc::internal::StreamedUnaryHandler< ::scheduler::Request1, ::scheduler::Response1>(std::bind(&WithStreamedUnaryMethod_Once<BaseClass>::StreamedOnce, this, std::placeholders::_1, std::placeholders::_2)));
+    ExperimentalWithRawCallbackMethod_Invoke3() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(2,
+        new ::grpc_impl::internal::CallbackClientStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this] { return this->Invoke3(); }));
     }
-    ~WithStreamedUnaryMethod_Once() override {
+    ~ExperimentalWithRawCallbackMethod_Invoke3() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Invoke3(::grpc::ServerContext* context, ::grpc::ServerReader< ::plugins::Request1>* reader, ::plugins::Response1* response) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::experimental::ServerReadReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* Invoke3() {
+      return new ::grpc_impl::internal::UnimplementedReadReactor<
+        ::grpc::ByteBuffer, ::grpc::ByteBuffer>;}
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_Invoke4 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    ExperimentalWithRawCallbackMethod_Invoke4() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(3,
+        new ::grpc_impl::internal::CallbackBidiHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this] { return this->Invoke4(); }));
+    }
+    ~ExperimentalWithRawCallbackMethod_Invoke4() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status Invoke4(::grpc::ServerContext* context, ::grpc::ServerReaderWriter< ::plugins::Response1, ::plugins::Request1>* stream)  override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::experimental::ServerBidiReactor< ::grpc::ByteBuffer, ::grpc::ByteBuffer>* Invoke4() {
+      return new ::grpc_impl::internal::UnimplementedBidiReactor<
+        ::grpc::ByteBuffer, ::grpc::ByteBuffer>;}
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_Invoke1 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service *service) {}
+   public:
+    WithStreamedUnaryMethod_Invoke1() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::StreamedUnaryHandler< ::plugins::Request1, ::plugins::Response1>(std::bind(&WithStreamedUnaryMethod_Invoke1<BaseClass>::StreamedInvoke1, this, std::placeholders::_1, std::placeholders::_2)));
+    }
+    ~WithStreamedUnaryMethod_Invoke1() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status Once(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::scheduler::Response1* response) override {
+    ::grpc::Status Invoke1(::grpc::ServerContext* context, const ::plugins::Request1* request, ::plugins::Response1* response) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedOnce(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::scheduler::Request1,::scheduler::Response1>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedInvoke1(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::plugins::Request1,::plugins::Response1>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_Once<Service > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_Invoke1<Service > StreamedUnaryService;
   template <class BaseClass>
-  class WithSplitStreamingMethod_Stream : public BaseClass {
+  class WithSplitStreamingMethod_Invoke2 : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service *service) {}
    public:
-    WithSplitStreamingMethod_Stream() {
+    WithSplitStreamingMethod_Invoke2() {
       ::grpc::Service::MarkMethodStreamed(1,
-        new ::grpc::internal::SplitServerStreamingHandler< ::scheduler::Request1, ::scheduler::Response1>(std::bind(&WithSplitStreamingMethod_Stream<BaseClass>::StreamedStream, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::SplitServerStreamingHandler< ::plugins::Request1, ::plugins::Response1>(std::bind(&WithSplitStreamingMethod_Invoke2<BaseClass>::StreamedInvoke2, this, std::placeholders::_1, std::placeholders::_2)));
     }
-    ~WithSplitStreamingMethod_Stream() override {
+    ~WithSplitStreamingMethod_Invoke2() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status Stream(::grpc::ServerContext* context, const ::scheduler::Request1* request, ::grpc::ServerWriter< ::scheduler::Response1>* writer) override {
+    ::grpc::Status Invoke2(::grpc::ServerContext* context, const ::plugins::Request1* request, ::grpc::ServerWriter< ::plugins::Response1>* writer) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with split streamed
-    virtual ::grpc::Status StreamedStream(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::scheduler::Request1,::scheduler::Response1>* server_split_streamer) = 0;
+    virtual ::grpc::Status StreamedInvoke2(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::plugins::Request1,::plugins::Response1>* server_split_streamer) = 0;
   };
-  typedef WithSplitStreamingMethod_Stream<Service > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_Once<WithSplitStreamingMethod_Stream<Service > > StreamedService;
+  typedef WithSplitStreamingMethod_Invoke2<Service > SplitStreamedService;
+  typedef WithStreamedUnaryMethod_Invoke1<WithSplitStreamingMethod_Invoke2<Service > > StreamedService;
 };
 
-}  // namespace scheduler
+}  // namespace plugins
 
 
 #endif  // GRPC_service_2eproto__INCLUDED
