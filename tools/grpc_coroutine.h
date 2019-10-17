@@ -1,7 +1,6 @@
 #pragma once
 
 #include <grpcpp/grpcpp.h>
-#include <plugin_core.h>
 
 #if __has_include(<coroutine>)
 #include <coroutine>
@@ -14,9 +13,11 @@ using namespace std::experimental;
 
 #endif
 
-struct grpc_await_context_t {
+class suspend_on_completion_queue_t {
+  protected:
     function<void(coroutine_handle<void>)> callback;
 
+  public:
     void set_false() noexcept {
         callback = nullptr;
     }
@@ -32,7 +33,7 @@ struct grpc_await_context_t {
     }
 };
 
-struct promise_grpc_service_routine_t : public grpc_await_context_t {
+struct promise_service_coroutine_t : public suspend_on_completion_queue_t {
     auto initial_suspend() noexcept {
         return suspend_never{};
     }
@@ -42,25 +43,23 @@ struct promise_grpc_service_routine_t : public grpc_await_context_t {
     void unhandled_exception() noexcept(false) {
         throw;
     }
-    void return_value(grpc::Status status) noexcept {
+    void return_value(grpc::Status) noexcept {
     }
 
     auto get_return_object() noexcept {
         return this;
     }
-    auto
-    await_transform(function<void(coroutine_handle<void>)>&& callback) noexcept
-        -> grpc_await_context_t& {
-        this->callback = std::move(callback);
+
+    template <typename Fn>
+    auto await_transform(Fn&& fn) noexcept -> suspend_on_completion_queue_t& {
+        this->callback = move(fn);
         return *this;
     }
 };
 
-struct grpc_service_routine_t : coroutine_handle<void> {
-    using promise_type = promise_grpc_service_routine_t;
+class service_coroutine_t final {
+  public:
+    using promise_type = promise_service_coroutine_t;
 
-    grpc_service_routine_t(promise_type* p)
-        : coroutine_handle<void>{
-              coroutine_handle<promise_type>::from_promise(*p)} {
-    }
+    service_coroutine_t(promise_type*){};
 };

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(grpc_plugins LANGUAGES CXX)
 
+find_package(protobuf 3.6 CONFIG REQUIRED)
 find_package(gRPC   CONFIG REQUIRED)
 
 if(NOT ${CMAKE_TOOLCHAIN_FILE} MATCHES vcpkg.cmake)
@@ -14,13 +15,10 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 # gRPC C++
 add_library(plugin_core SHARED
     include/plugin_core.h
-    include/plugin_loader.h
     src/libmain.cpp
 
-    src/grpc_coroutine.h
-    src/grpc_coroutine.cpp
-    src/grpc_service.cpp
-    src/grpc_types.cpp
+    src/plugin_impl.h
+    src/plugin_impl.cpp
 )
 
 target_include_directories(plugin_core
@@ -40,13 +38,13 @@ PUBLIC
 target_link_libraries(plugin_core
 PUBLIC
     ${CMAKE_DL_LIBS}
-    gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc_cronet
+    protobuf::libprotobuf protobuf::libprotobuf-lite
 )
 
 if(MSVC)
     target_compile_options(plugin_core
     PUBLIC
-        /W4 /await
+        /await
     )
 endif()
 
@@ -70,8 +68,6 @@ add_custom_command(
 
 target_sources(plugin_core
 PRIVATE
-    static/service.grpc.pb.h
-    static/service.grpc.pb.cc
     static/service.pb.h
     static/service.pb.cc
 )
@@ -89,37 +85,71 @@ PRIVATE
 
 if(WIN32)
     target_compile_definitions(plugin_core
-    PRIVATE
+    PUBLIC
         WIN32_LEAN_AND_MEAN NOMINMAX
         _WIN32_WINNT=0x0A00
     )
 endif()
 
-# # ... testing comes here ...
-# enable_testing()
-# find_package(Catch2 CONFIG REQUIRED)
 
-# set(TEST_SUITE ${PROJECT_NAME}_test_suite)
-# add_executable(${TEST_SUITE}
-#     test/test_main.cpp
-# )
+add_executable(plugin_launcher
+    static/service.grpc.pb.h
+    static/service.grpc.pb.cc
 
-# set_target_properties(${TEST_SUITE}
-# PROPERTIES
-#     CXX_STANDARD 20
-# )
+    tools/loader.h
+    tools/loader.cpp
+    tools/grpc_coroutine.h
+    tools/grpc_coroutine.cpp
+    tools/service.cpp
+    tools/launcher.cpp
+)
 
-# target_include_directories(${TEST_SUITE}
-# PRIVATE
-#     ${PROJECT_SOURCE_DIR}/test
-#     ${PROJECT_SOURCE_DIR}/static
-# )
+set_target_properties(plugin_launcher
+PROPERTIES
+    CXX_STANDARD 20
+)
 
-# target_link_libraries(${TEST_SUITE}
-# PRIVATE
-#     plugin_core 
-#     ${CMAKE_DL_LIBS}
-#     Catch2::Catch2
-# )
+target_include_directories(plugin_launcher
+PRIVATE
+    ${PROJECT_SOURCE_DIR}/static
+)
 
-# add_test(test_basic_loading ${TEST_SUITE})
+target_link_libraries(plugin_launcher
+PRIVATE
+    plugin_core
+    gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc_cronet
+)
+
+# ... testing comes here ...
+if(NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+    return()
+endif()
+return()
+
+enable_testing()
+find_package(Catch2 CONFIG REQUIRED)
+
+set(TEST_SUITE ${PROJECT_NAME}_test_suite)
+add_executable(${TEST_SUITE}
+    test/test_main.cpp
+)
+
+set_target_properties(${TEST_SUITE}
+PROPERTIES
+    CXX_STANDARD 20
+)
+
+target_include_directories(${TEST_SUITE}
+PRIVATE
+    ${PROJECT_SOURCE_DIR}/test
+    ${PROJECT_SOURCE_DIR}/static
+)
+
+target_link_libraries(${TEST_SUITE}
+PRIVATE
+    plugin_core 
+    ${CMAKE_DL_LIBS}
+    Catch2::Catch2
+)
+
+add_test(test_basic ${TEST_SUITE})

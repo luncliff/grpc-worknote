@@ -26,7 +26,6 @@ using plugin_status_t = void (*)(gsl::not_null<plugin_context_t*> p) noexcept;
 
 struct plugin_request_t;
 struct plugin_response_t;
-using plugin_error_t = uint32_t;
 
 void set_blob(plugin_request_t& req, gsl::span<std::byte> view) noexcept;
 auto get_blob(const plugin_request_t& req) noexcept
@@ -36,7 +35,9 @@ void set_blob(plugin_response_t& res, gsl::span<std::byte> view) noexcept;
 auto get_blob(const plugin_response_t& res) noexcept
     -> gsl::span<const std::byte>;
 
-using plugin_handle_t = auto (*)(gsl::not_null<plugin_context_t*> p, //
+using plugin_error_t = uint32_t;
+
+using plugin_serve_t = auto (*)(gsl::not_null<plugin_context_t*> p, //
                                  const plugin_request_t& req,
                                  plugin_response_t& res) noexcept
                         -> plugin_error_t;
@@ -46,7 +47,7 @@ struct plugin_t final {
     gsl::not_null<plugin_destroy_t> on_destroy;
     gsl::not_null<plugin_status_t> on_ready;
     gsl::not_null<plugin_status_t> on_idle;
-    gsl::not_null<plugin_handle_t> on_request_1;
+    gsl::not_null<plugin_serve_t> on_request_1;
 };
 
 #endif // PLUGIN_CORE_H
