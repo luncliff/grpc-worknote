@@ -93,15 +93,18 @@ endif()
 
 
 add_executable(plugin_launcher
+    tools/launcher.cpp
+    
     static/service.grpc.pb.h
     static/service.grpc.pb.cc
 
     tools/loader.h
     tools/loader.cpp
-    tools/grpc_coroutine.h
-    tools/grpc_coroutine.cpp
-    tools/service.cpp
-    tools/launcher.cpp
+
+    tools/grpc_shared.h
+    tools/grpc_completion_queue.cpp
+    tools/grpc_service.cpp
+    tools/grpc_handlers.cpp
 )
 
 set_target_properties(plugin_launcher

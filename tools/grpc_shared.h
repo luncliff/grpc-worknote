@@ -1,4 +1,5 @@
 #pragma once
+#include <new>
 
 #include <grpcpp/grpcpp.h>
 
@@ -13,9 +14,13 @@ using namespace std::experimental;
 
 #endif
 
+bool is_shutdowned() noexcept;
+
+using suspend_callback_t = function<void(coroutine_handle<void>)>;
+
 class suspend_on_completion_queue_t {
   protected:
-    function<void(coroutine_handle<void>)> callback;
+    suspend_callback_t callback;
 
   public:
     void set_false() noexcept {
@@ -43,23 +48,29 @@ struct promise_service_coroutine_t : public suspend_on_completion_queue_t {
     void unhandled_exception() noexcept(false) {
         throw;
     }
+
     void return_value(grpc::Status) noexcept {
+        // do nothing with the value.
     }
 
     auto get_return_object() noexcept {
         return this;
     }
 
-    template <typename Fn>
-    auto await_transform(Fn&& fn) noexcept -> suspend_on_completion_queue_t& {
+    auto await_transform(suspend_callback_t&& fn) noexcept
+        -> suspend_on_completion_queue_t& {
         this->callback = move(fn);
         return *this;
     }
 };
 
-class service_coroutine_t final {
+class service_coroutine_t final : public coroutine_handle<void> {
   public:
     using promise_type = promise_service_coroutine_t;
 
-    service_coroutine_t(promise_type*){};
+  public:
+    service_coroutine_t(promise_type* prom) noexcept(false) {
+        if (coroutine_handle<void>& ref = *this; prom)
+            ref = coroutine_handle<promise_type>::from_promise(*prom);
+    };
 };

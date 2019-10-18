@@ -2,17 +2,26 @@
 #include "../src/plugin_impl.h"
 #include <service.grpc.pb.h>
 
-#include "grpc_coroutine.h"
+#include "grpc_shared.h"
 
+using namespace std;
 using namespace grpc;
 
-auto until(function<void(coroutine_handle<void>)>&& on_suspend) {
+auto until(function<void(coroutine_handle<void>)>&& on_suspend) noexcept {
     return on_suspend;
 }
 
-auto handle_invoke1(grpc_impl::ServerCompletionQueue& queue,
-                    plugins::Executor1::AsyncService& service) noexcept(false)
-    -> service_coroutine_t {
+auto serve_invoke1(grpc_impl::ServerCompletionQueue& queue,
+                   plugins::Executor1::AsyncService& service,
+                   gsl::not_null<plugin_context_t*> pctx,
+                   plugin_t& plugin) noexcept(false) -> service_coroutine_t {
+
+    // serve next request unless the launcher is shutdowned
+    auto on_return = gsl::finally([&, ctx = pctx.get()]() {
+        if (is_shutdowned() == false)
+            serve_invoke1(queue, service, ctx, plugin);
+    });
+
     ServerContext sctx{};
     ServerAsyncResponseWriter<plugins::Response1> responder{&sctx};
 
@@ -32,9 +41,17 @@ auto handle_invoke1(grpc_impl::ServerCompletionQueue& queue,
     co_return status;
 }
 
-auto handle_invoke2(grpc_impl::ServerCompletionQueue& queue,
-                    plugins::Executor1::AsyncService& service) noexcept(false)
-    -> service_coroutine_t {
+auto serve_invoke2(grpc_impl::ServerCompletionQueue& queue,
+                   plugins::Executor1::AsyncService& service,
+                   gsl::not_null<plugin_context_t*> pctx,
+                   plugin_t& plugin) noexcept(false) -> service_coroutine_t {
+
+    // serve next request unless the launcher is shutdowned
+    auto on_return = gsl::finally([&, ctx = pctx.get()]() {
+        if (is_shutdowned() == false)
+            serve_invoke1(queue, service, ctx, plugin);
+    });
+
     ServerContext sctx{};
     ServerAsyncWriter<plugins::Response1> writer{&sctx};
 
@@ -58,9 +75,17 @@ auto handle_invoke2(grpc_impl::ServerCompletionQueue& queue,
     co_return status;
 }
 
-auto handle_invoke3(grpc_impl::ServerCompletionQueue& queue,
-                    plugins::Executor1::AsyncService& service) noexcept(false)
-    -> service_coroutine_t {
+auto serve_invoke3(grpc_impl::ServerCompletionQueue& queue,
+                   plugins::Executor1::AsyncService& service,
+                   gsl::not_null<plugin_context_t*> pctx,
+                   plugin_t& plugin) noexcept(false) -> service_coroutine_t {
+
+    // serve next request unless the launcher is shutdowned
+    auto on_return = gsl::finally([&, ctx = pctx.get()]() {
+        if (is_shutdowned() == false)
+            serve_invoke1(queue, service, ctx, plugin);
+    });
+
     ServerContext sctx{};
     ServerAsyncReader<plugins::Response1, plugins::Request1> reader{&sctx};
 
@@ -84,9 +109,17 @@ auto handle_invoke3(grpc_impl::ServerCompletionQueue& queue,
     co_return status;
 }
 
-auto handle_invoke4(grpc_impl::ServerCompletionQueue& queue,
-                    plugins::Executor1::AsyncService& service) noexcept(false)
-    -> service_coroutine_t {
+auto serve_invoke4(grpc_impl::ServerCompletionQueue& queue,
+                   plugins::Executor1::AsyncService& service,
+                   gsl::not_null<plugin_context_t*> pctx,
+                   plugin_t& plugin) noexcept(false) -> service_coroutine_t {
+
+    // serve next request unless the launcher is shutdowned
+    auto on_return = gsl::finally([&, ctx = pctx.get()]() {
+        if (is_shutdowned() == false)
+            serve_invoke1(queue, service, ctx, plugin);
+    });
+
     grpc::ServerContext sctx{};
     ServerAsyncReaderWriter<plugins::Response1, plugins::Request1> link{&sctx};
 
@@ -111,41 +144,4 @@ auto handle_invoke4(grpc_impl::ServerCompletionQueue& queue,
         link.Finish(status, coro.address());
     });
     co_return status;
-}
-
-class plugin_service_t final : public plugins::Executor1::AsyncService {
-    plugin_t& p;
-
-  public:
-    plugin_service_t(plugin_t& _plugin) noexcept
-        : plugins::Executor1::AsyncService{}, p{_plugin} {
-    }
-
-  public:
-    Status Invoke1(ServerContext* context, const plugins::Request1* request,
-                   plugins::Response1* response) override {
-        return Status(grpc::StatusCode::OK, "");
-    }
-
-    Status Invoke2(ServerContext* context, const plugins::Request1* request,
-                   ServerWriter<plugins::Response1>* writer) override {
-        return Status(StatusCode::OK, "");
-    }
-
-    Status Invoke3(ServerContext* context,
-                   ServerReader<plugins::Request1>* reader,
-                   plugins::Response1* response) override {
-        return Status(StatusCode::OK, "");
-    }
-
-    Status Invoke4(ServerContext* context,
-                   ServerReaderWriter<plugins::Response1, plugins::Request1>*
-                       stream) override {
-        return Status(StatusCode::OK, "");
-    }
-};
-
-auto make_service(plugin_t& p) noexcept(false)
-    -> std::unique_ptr<plugins::Executor1::AsyncService> {
-    return make_unique<plugin_service_t>(p);
 }

@@ -35,7 +35,7 @@ class loader_t final {
     auto lookup(const char* symbol) const noexcept -> void*;
 
   public:
-    static loader_t load(const char* file) noexcept;
+    static loader_t load(const char* file) noexcept(false);
     static auto error() noexcept -> const char*;
 };
 

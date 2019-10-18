@@ -1,30 +1,48 @@
 
 #include <plugin_core.h>
-#include <service.grpc.pb.h>
 
-#include "grpc_coroutine.h"
+#include <grpcpp/grpcpp.h>
+
+#include "service.grpc.pb.h"
 #include "loader.h"
 
+void serve(grpc::Server& launcher, grpc_impl::ServerCompletionQueue& queue,
+           plugins::Executor1::AsyncService& service,
+           plugin_t& plugin) noexcept(false);
+
 plugin_t make_plugin(loader_t& dll) noexcept(false);
-auto make_service(plugin_t& p) noexcept(false)
-    -> std::unique_ptr<plugins::Executor1::AsyncService>;
 
-uint32_t serve(grpc::Server& launcher, grpc_impl::ServerCompletionQueue& queue,
-               plugins::Executor1::AsyncService& service) noexcept;
+// "launcher.exe" "module.dll" "0.0.0.0:10443"
+int main(int argc, char* argv[]) try {
 
-int main(int argc, char* argv[]) {
-    auto loader = loader_t::load(argv[2]);
+    auto loader = loader_t::load(argv[1]);
     auto plugin = make_plugin(loader);
 
     grpc::ServerBuilder builder{};
-    builder.AddListeningPort(argv[1], grpc::InsecureServerCredentials());
+    auto creds = grpc::InsecureServerCredentials();
+    builder.AddListeningPort(argv[2], creds);
 
-    auto service = make_service(plugin);
-    builder.RegisterService(service.get());
+    plugins::Executor1::AsyncService service{};
+    builder.RegisterService(&service);
 
-    auto cq = builder.AddCompletionQueue();
+    auto queue = builder.AddCompletionQueue();
     auto launcher = builder.BuildAndStart();
-    return serve(*launcher, *cq, *service);
+
+    serve(*launcher, *queue, service, plugin);
+    return EXIT_SUCCESS;
+
+} catch (const std::error_code& ec) {
+    auto msg = ec.message();
+    fputs(msg.c_str(), stderr);
+    return ec.value();
+
+} catch (const std::system_error& ex) {
+    fputs(ex.what(), stderr);
+    return ex.code().value();
+
+} catch (const std::exception& ex) {
+    fputs(ex.what(), stderr);
+    return EXIT_FAILURE;
 }
 
 plugin_t make_plugin(loader_t& dll) noexcept(false) {
