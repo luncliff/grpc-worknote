@@ -48,8 +48,9 @@ matrix:
           ./vcpkg install grpc catch2 ms-gsl
           popd
       before_script:
+        - echo "$(which cmake)"
         - mkdir -p build && pushd build
       script:
-        - cmake .. -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        - /usr/bin/cmake .. -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake"
       after_script:
         - popd
