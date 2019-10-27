@@ -3,12 +3,15 @@ language: cpp
 
 addons:
   apt:
+    # https://docs.travis-ci.com/user/installing-dependencies#installing-packages-with-the-apt-addon
     sources:
-      - ubuntu-toolchain-r-test
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
     packages:
       - g++-8
       - curl
       - unzip
+      - wget
+      - rsync
       - cmake
       - ninja-build
   homebrew:
@@ -27,9 +30,9 @@ matrix:
       compiler: gcc-8
       before_install:
         - g++-8 --version
-        - cmake --version
-        - ninja --version
+        - export CC=gcc-8 CXX=g++-8
       install:
+        - bash ./scripts/install-cmake-3.15.sh
         - |
           mkdir -p ${HOME}/vcpkg
           pushd ${HOME}/vcpkg
@@ -40,8 +43,9 @@ matrix:
           ./bootstrap-vcpkg.sh
           ./vcpkg install grpc catch2 ms-gsl
           popd
+      before_script:
+        - mkdir -p build && pushd build
       script:
-        - |
-          mkdir -p build && pushd build
-          cmake .. -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake"
-          popd
+        - cmake .. -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      after_script:
+        - popd
