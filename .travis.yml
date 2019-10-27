@@ -1,0 +1,47 @@
+
+language: cpp
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-8
+      - curl
+      - unzip
+      - cmake
+      - ninja-build
+  homebrew:
+    packages:
+      - cmake
+      - ninja
+
+cache:
+  directories:
+    - ${HOME}/vcpkg/installed
+
+matrix:
+  include:
+    - os: linux
+      dist: bionic
+      compiler: gcc-8
+      before_install:
+        - g++-8 --version
+        - cmake --version
+        - ninja --version
+      install:
+        - |
+          mkdir -p ${HOME}/vcpkg
+          pushd ${HOME}/vcpkg
+          git init
+          git remote add origin https://github.com/Microsoft/vcpkg.git
+          git fetch origin master
+          git checkout -b master origin/master
+          ./bootstrap-vcpkg.sh
+          ./vcpkg install grpc catch2 ms-gsl
+          popd
+      script:
+        - |
+          mkdir -p build && pushd build
+          cmake .. -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+          popd
