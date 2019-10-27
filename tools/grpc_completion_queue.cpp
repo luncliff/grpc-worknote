@@ -64,6 +64,9 @@ void consume_queue(grpc::Server& launcher,
     // hijack some signals. it will break the completion queue
     signal(SIGTERM, on_signal_change_sig_status);
 
+    puts("raising siganl ...\n");
+    raise(SIGTERM); // trigger termination immediately
+
     void* user_data = nullptr;
     bool ok = false;
     // fetch and resume with signal checking

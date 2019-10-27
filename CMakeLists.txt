@@ -11,15 +11,6 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include(grpc_codegen_targets)
 include(report-project-info)
 
-
-add_library(plugin_core
-    include/plugin_core.h
-    src/libmain.cpp
-    src/plugin_impl.h
-    src/plugin_impl.cpp
-)
-add_dependencies(plugin_core run_protoc_cpp)
-
 add_custom_command(
     COMMENT     "generating from 'service.proto' ..."
     OUTPUT      ${PROJECT_SOURCE_DIR}/static/service.pb.h
@@ -34,16 +25,64 @@ add_custom_command(
                     --grpc_out=${PROJECT_SOURCE_DIR}/static
                     --plugin="protoc-gen-grpc=${grpc_cpp_plugin_path}"
 )
-target_sources(plugin_core
-PRIVATE
+add_library(plugin_pb
     static/service.pb.h
     static/service.pb.cc
 )
+# add_dependencies(plugin_pb run_protoc_cpp)
 
+set_target_properties(plugin_pb
+PROPERTIES
+    CXX_STANDARD 17
+    WINDOWS_EXPORT_ALL_SYMBOLS True
+)
+target_include_directories(plugin_pb
+PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/static>
+)
+target_link_libraries(plugin_pb
+PUBLIC
+    ${CMAKE_DL_LIBS}
+    protobuf::libprotobuf protobuf::libprotobuf-lite
+)
+if(WIN32)
+    target_compile_definitions(plugin_pb
+    PUBLIC
+        WIN32_LEAN_AND_MEAN NOMINMAX
+        _WIN32_WINNT=0x0A00 # be explicit
+    )
+endif()
+
+add_library(plugin_grpc
+    static/service.grpc.pb.h
+    static/service.grpc.pb.cc
+)
+# add_dependencies(plugin_grpc run_protoc_cpp)
+
+set_target_properties(plugin_grpc
+PROPERTIES
+    CXX_STANDARD 17
+    WINDOWS_EXPORT_ALL_SYMBOLS True
+)
+target_link_libraries(plugin_grpc
+PUBLIC
+    ${CMAKE_DL_LIBS} plugin_pb
+    gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc_cronet
+)
+
+add_library(plugin_core
+    include/plugin_core.h
+    static/service.pb.h
+
+    src/libmain.cpp
+    src/plugin_impl.h
+    src/plugin_impl.cpp
+    src/plugin_mock.cpp
+)
 set_target_properties(plugin_core
 PROPERTIES
     CXX_STANDARD 17
-    # WINDOWS_EXPORT_ALL_SYMBOLS True
+    WINDOWS_EXPORT_ALL_SYMBOLS True
 )
 
 target_include_directories(plugin_core
@@ -56,22 +95,13 @@ PUBLIC
 
 target_link_libraries(plugin_core
 PUBLIC
-    ${CMAKE_DL_LIBS}
-    protobuf::libprotobuf protobuf::libprotobuf-lite
+    plugin_pb
 )
 
 target_compile_definitions(plugin_core
 PRIVATE
     PLATFORM_NAME=L"${CMAKE_SYSTEM_NAME}"
 )
-
-if(WIN32)
-    target_compile_definitions(plugin_core
-    PUBLIC
-        WIN32_LEAN_AND_MEAN NOMINMAX
-        _WIN32_WINNT=0x0A00 # be explicit
-    )
-endif()
 
 if(MSVC)
     target_compile_options(plugin_core
@@ -81,6 +111,7 @@ if(MSVC)
 else()
     target_compile_options(plugin_core
     PUBLIC
+        -O0 -g
         -fPIC -stdlib=libc++ -fcoroutines-ts
     )
 endif()
@@ -98,11 +129,10 @@ if(${CMAKE_TOOLCHAIN_FILE} MATCHES vcpkg.cmake)
 endif()
 
 add_executable(plugin_service
-    tools/launcher.cpp
-    
+    static/service.pb.h
     static/service.grpc.pb.h
-    static/service.grpc.pb.cc
-
+    
+    tools/launcher.cpp
     tools/loader.h
     tools/loader.cpp
 
@@ -111,21 +141,17 @@ add_executable(plugin_service
     tools/grpc_service.cpp
     tools/grpc_handlers.cpp
 )
-
 set_target_properties(plugin_service
 PROPERTIES
     CXX_STANDARD 17
 )
-
 target_include_directories(plugin_service
 PRIVATE
     ${PROJECT_SOURCE_DIR}/static
 )
-
 target_link_libraries(plugin_service
 PRIVATE
-    plugin_core
-    gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc_cronet
+    plugin_core plugin_grpc
 )
 
 #
@@ -156,7 +182,9 @@ install(FILES   ${PROJECT_SOURCE_DIR}/include/plugin_core.h
                 ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.h
         DESTINATION ${CMAKE_INSTALL_PREFIX}/include
 )
-install(TARGETS         plugin_core plugin_service
+
+# https://stackoverflow.com/questions/33991581/install-name-tool-to-update-a-executable-to-search-for-dylib-in-mac-os-x
+install(TARGETS         plugin_pb plugin_grpc plugin_core plugin_service
         EXPORT          ${PROJECT_NAME}-config
         RUNTIME  DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
         LIBRARY  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
@@ -177,6 +205,8 @@ find_package(Catch2 CONFIG REQUIRED)
 set(TEST_SUITE ${PROJECT_NAME}_test_suite)
 add_executable(${TEST_SUITE}
     test/test_main.cpp
+    test/test_env.cpp
+    test/test_completion_queue.cpp
 )
 
 set_target_properties(${TEST_SUITE}
@@ -192,7 +222,8 @@ PRIVATE
 
 target_link_libraries(${TEST_SUITE}
 PRIVATE
-    plugin_core 
+    plugin_core plugin_grpc
     Catch2::Catch2
 )
-add_test(test_basic ${TEST_SUITE})
+add_test(test_platform_abi  ${TEST_SUITE} "[abi]")
+add_test(test_grpc_features ${TEST_SUITE} "[grpc]")

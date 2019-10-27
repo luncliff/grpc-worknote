@@ -35,10 +35,11 @@ auto get_blob(const plugin_response_t& res) noexcept
     -> gsl::span<const std::byte>;
 
 using plugin_error_t = uint32_t;
+// auto plugin_error_string(plugin_error_t err) -> gsl::czsring<>;
 
 using plugin_serve_t = auto (*)(gsl::not_null<plugin_context_t*> p, //
                                 const plugin_request_t& req,
-                                plugin_response_t& res) noexcept
+                                plugin_response_t& res, bool& ready) noexcept
                        -> plugin_error_t;
 
 struct plugin_t final {
@@ -46,7 +47,10 @@ struct plugin_t final {
     gsl::not_null<plugin_destroy_t> on_destroy;
     gsl::not_null<plugin_status_t> on_ready;
     gsl::not_null<plugin_status_t> on_idle;
-    gsl::not_null<plugin_serve_t> on_request_1;
+    gsl::not_null<plugin_serve_t> on_serve_1;
+    gsl::not_null<plugin_serve_t> on_serve_2;
+    gsl::not_null<plugin_serve_t> on_serve_3;
+    gsl::not_null<plugin_serve_t> on_serve_4;
 };
 
 #endif // PLUGIN_CORE_H

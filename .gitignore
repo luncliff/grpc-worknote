@@ -1,6 +1,8 @@
 
 .vscode
 [Bb]uild
+install
+out
 
 # Created by https://www.gitignore.io/api/go,c++,cmake,visualstudio
 # Edit at https://www.gitignore.io/?templates=go,c++,cmake,visualstudio

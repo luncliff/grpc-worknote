@@ -11,15 +11,19 @@ auto until(function<void(coroutine_handle<void>)>&& on_suspend) noexcept {
     return on_suspend;
 }
 
+const plugin_t& get_current_plugin() noexcept;
+
 auto serve_invoke1(grpc_impl::ServerCompletionQueue& queue,
                    plugins_v1::Executor1::AsyncService& service,
-                   gsl::not_null<plugin_context_t*> pctx,
-                   plugin_t& plugin) noexcept(false) -> service_coroutine_t {
+                   gsl::not_null<plugin_context_t*> pctx) noexcept(false)
+    -> service_coroutine_t {
+    auto& plugin = get_current_plugin();
+    co_return grpc::Status{};
 
     // serve next request unless the launcher is shutdowned
     auto on_return = gsl::finally([&, ctx = pctx.get()]() {
         if (is_shutdowned() == false)
-            serve_invoke1(queue, service, ctx, plugin);
+            serve_invoke1(queue, service, ctx);
     });
 
     ServerContext sctx{};
@@ -43,13 +47,15 @@ auto serve_invoke1(grpc_impl::ServerCompletionQueue& queue,
 
 auto serve_invoke2(grpc_impl::ServerCompletionQueue& queue,
                    plugins_v1::Executor1::AsyncService& service,
-                   gsl::not_null<plugin_context_t*> pctx,
-                   plugin_t& plugin) noexcept(false) -> service_coroutine_t {
+                   gsl::not_null<plugin_context_t*> pctx) noexcept(false)
+    -> service_coroutine_t {
+    auto& plugin = get_current_plugin();
+    co_return grpc::Status{};
 
     // serve next request unless the launcher is shutdowned
     auto on_return = gsl::finally([&, ctx = pctx.get()]() {
         if (is_shutdowned() == false)
-            serve_invoke1(queue, service, ctx, plugin);
+            serve_invoke1(queue, service, ctx);
     });
 
     ServerContext sctx{};
@@ -77,13 +83,15 @@ auto serve_invoke2(grpc_impl::ServerCompletionQueue& queue,
 
 auto serve_invoke3(grpc_impl::ServerCompletionQueue& queue,
                    plugins_v1::Executor1::AsyncService& service,
-                   gsl::not_null<plugin_context_t*> pctx,
-                   plugin_t& plugin) noexcept(false) -> service_coroutine_t {
+                   gsl::not_null<plugin_context_t*> pctx) noexcept(false)
+    -> service_coroutine_t {
+    auto& plugin = get_current_plugin();
+    co_return grpc::Status{};
 
     // serve next request unless the launcher is shutdowned
     auto on_return = gsl::finally([&, ctx = pctx.get()]() {
         if (is_shutdowned() == false)
-            serve_invoke1(queue, service, ctx, plugin);
+            serve_invoke1(queue, service, ctx);
     });
 
     ServerContext sctx{};
@@ -112,13 +120,15 @@ auto serve_invoke3(grpc_impl::ServerCompletionQueue& queue,
 
 auto serve_invoke4(grpc_impl::ServerCompletionQueue& queue,
                    plugins_v1::Executor1::AsyncService& service,
-                   gsl::not_null<plugin_context_t*> pctx,
-                   plugin_t& plugin) noexcept(false) -> service_coroutine_t {
+                   gsl::not_null<plugin_context_t*> pctx) noexcept(false)
+    -> service_coroutine_t {
+    auto& plugin = get_current_plugin();
+    co_return grpc::Status{};
 
     // serve next request unless the launcher is shutdowned
     auto on_return = gsl::finally([&, ctx = pctx.get()]() {
         if (is_shutdowned() == false)
-            serve_invoke1(queue, service, ctx, plugin);
+            serve_invoke1(queue, service, ctx);
     });
 
     grpc::ServerContext sctx{};
