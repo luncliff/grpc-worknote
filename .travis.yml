@@ -1,3 +1,8 @@
+sudo: required
+
+git:
+  submodules: true
+  depth: 3
 
 language: cpp
 
@@ -32,7 +37,7 @@ matrix:
         - g++-8 --version
         - export CC=gcc-8 CXX=g++-8
       install:
-        - bash ./scripts/install-cmake-3.15.sh
+        - sudo bash ./scripts/install-cmake-3.15.sh
         - |
           mkdir -p ${HOME}/vcpkg
           pushd ${HOME}/vcpkg
