@@ -12,7 +12,7 @@ auto until(function<void(coroutine_handle<void>)>&& on_suspend) noexcept {
 }
 
 auto serve_invoke1(grpc_impl::ServerCompletionQueue& queue,
-                   plugins::Executor1::AsyncService& service,
+                   plugins_v1::Executor1::AsyncService& service,
                    gsl::not_null<plugin_context_t*> pctx,
                    plugin_t& plugin) noexcept(false) -> service_coroutine_t {
 
@@ -23,7 +23,7 @@ auto serve_invoke1(grpc_impl::ServerCompletionQueue& queue,
     });
 
     ServerContext sctx{};
-    ServerAsyncResponseWriter<plugins::Response1> responder{&sctx};
+    ServerAsyncResponseWriter<plugins_v1::Response1> responder{&sctx};
 
     plugin_request_t req{};
 
@@ -42,7 +42,7 @@ auto serve_invoke1(grpc_impl::ServerCompletionQueue& queue,
 }
 
 auto serve_invoke2(grpc_impl::ServerCompletionQueue& queue,
-                   plugins::Executor1::AsyncService& service,
+                   plugins_v1::Executor1::AsyncService& service,
                    gsl::not_null<plugin_context_t*> pctx,
                    plugin_t& plugin) noexcept(false) -> service_coroutine_t {
 
@@ -53,7 +53,7 @@ auto serve_invoke2(grpc_impl::ServerCompletionQueue& queue,
     });
 
     ServerContext sctx{};
-    ServerAsyncWriter<plugins::Response1> writer{&sctx};
+    ServerAsyncWriter<plugins_v1::Response1> writer{&sctx};
 
     plugin_request_t req{};
 
@@ -76,7 +76,7 @@ auto serve_invoke2(grpc_impl::ServerCompletionQueue& queue,
 }
 
 auto serve_invoke3(grpc_impl::ServerCompletionQueue& queue,
-                   plugins::Executor1::AsyncService& service,
+                   plugins_v1::Executor1::AsyncService& service,
                    gsl::not_null<plugin_context_t*> pctx,
                    plugin_t& plugin) noexcept(false) -> service_coroutine_t {
 
@@ -87,7 +87,8 @@ auto serve_invoke3(grpc_impl::ServerCompletionQueue& queue,
     });
 
     ServerContext sctx{};
-    ServerAsyncReader<plugins::Response1, plugins::Request1> reader{&sctx};
+    ServerAsyncReader<plugins_v1::Response1, plugins_v1::Request1> reader{
+        &sctx};
 
     co_await until([&](coroutine_handle<void> coro) {
         service.RequestInvoke3(&sctx, &reader, &queue, &queue, coro.address());
@@ -110,7 +111,7 @@ auto serve_invoke3(grpc_impl::ServerCompletionQueue& queue,
 }
 
 auto serve_invoke4(grpc_impl::ServerCompletionQueue& queue,
-                   plugins::Executor1::AsyncService& service,
+                   plugins_v1::Executor1::AsyncService& service,
                    gsl::not_null<plugin_context_t*> pctx,
                    plugin_t& plugin) noexcept(false) -> service_coroutine_t {
 
@@ -121,7 +122,8 @@ auto serve_invoke4(grpc_impl::ServerCompletionQueue& queue,
     });
 
     grpc::ServerContext sctx{};
-    ServerAsyncReaderWriter<plugins::Response1, plugins::Request1> link{&sctx};
+    ServerAsyncReaderWriter<plugins_v1::Response1, plugins_v1::Request1> link{
+        &sctx};
 
     co_await until([&](coroutine_handle<void> coro) {
         service.RequestInvoke4(&sctx, &link, &queue, &queue, coro.address());

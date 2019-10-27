@@ -8,7 +8,7 @@
 syntax = "proto3";
 
 // import "google/protobuf/empty.proto";
-package plugins;
+package plugins_v1;
 
 message Request1 {
   bytes blob = 1;

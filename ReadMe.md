@@ -36,24 +36,27 @@ $ cmake --build . --target generate_grpc_files_cpp
 ```
 
 Current codegen target list:
-* generate_grpc_files_cpp
-* generate_grpc_files_csharp
-* generate_grpc_files_python
-* generate_grpc_files_nodejs
-* generate_grpc_files_go
+* `run_protoc_cpp`
+* `run_protoc_python`
+* `run_protoc_nodejs`
+* `run_protoc_csharp`
+* `run_protoc_go`
 
-Especially, Go requires additional setup.
+Especially, Go requires additional setup to acquire code generator.
 
 ```sh
-export GOPATH=$(pwd) # for PowerShell: $env:GOPATH=Get-Location
-go get -u github.com/golang/protobuf/protoc-gen-go
+export GOPATH=$(pwd)
+go get github.com/golang/protobuf/protoc-gen-go
+```
+
+Or, for PowerShell, 
+
+```ps1
+$env:GOPATH=Get-Location
+go get github.com/golang/protobuf/protoc-gen-go
 ```
 
 By doing this, 'bin/' folder will contain 'protoc-gen-go' executable.
-
-##### Scripts
-
-> TBA
 
 ### Test
 

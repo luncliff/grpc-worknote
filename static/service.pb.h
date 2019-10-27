@@ -54,24 +54,24 @@ struct TableStruct_service_2eproto {
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_service_2eproto;
-namespace plugins {
+namespace plugins_v1 {
 class Request1;
 class Request1DefaultTypeInternal;
 extern Request1DefaultTypeInternal _Request1_default_instance_;
 class Response1;
 class Response1DefaultTypeInternal;
 extern Response1DefaultTypeInternal _Response1_default_instance_;
-}  // namespace plugins
+}  // namespace plugins_v1
 PROTOBUF_NAMESPACE_OPEN
-template<> ::plugins::Request1* Arena::CreateMaybeMessage<::plugins::Request1>(Arena*);
-template<> ::plugins::Response1* Arena::CreateMaybeMessage<::plugins::Response1>(Arena*);
+template<> ::plugins_v1::Request1* Arena::CreateMaybeMessage<::plugins_v1::Request1>(Arena*);
+template<> ::plugins_v1::Response1* Arena::CreateMaybeMessage<::plugins_v1::Response1>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace plugins {
+namespace plugins_v1 {
 
 // ===================================================================
 
 class Request1 :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:plugins.Request1) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:plugins_v1.Request1) */ {
  public:
   Request1();
   virtual ~Request1();
@@ -151,7 +151,7 @@ class Request1 :
   void InternalSwap(Request1* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "plugins.Request1";
+    return "plugins_v1.Request1";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -194,7 +194,7 @@ class Request1 :
   std::string* _internal_mutable_blob();
   public:
 
-  // @@protoc_insertion_point(class_scope:plugins.Request1)
+  // @@protoc_insertion_point(class_scope:plugins_v1.Request1)
  private:
   class _Internal;
 
@@ -206,7 +206,7 @@ class Request1 :
 // -------------------------------------------------------------------
 
 class Response1 :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:plugins.Response1) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:plugins_v1.Response1) */ {
  public:
   Response1();
   virtual ~Response1();
@@ -286,7 +286,7 @@ class Response1 :
   void InternalSwap(Response1* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "plugins.Response1";
+    return "plugins_v1.Response1";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -329,7 +329,7 @@ class Response1 :
   std::string* _internal_mutable_blob();
   public:
 
-  // @@protoc_insertion_point(class_scope:plugins.Response1)
+  // @@protoc_insertion_point(class_scope:plugins_v1.Response1)
  private:
   class _Internal;
 
@@ -354,15 +354,15 @@ inline void Request1::clear_blob() {
   blob_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 inline const std::string& Request1::blob() const {
-  // @@protoc_insertion_point(field_get:plugins.Request1.blob)
+  // @@protoc_insertion_point(field_get:plugins_v1.Request1.blob)
   return _internal_blob();
 }
 inline void Request1::set_blob(const std::string& value) {
   _internal_set_blob(value);
-  // @@protoc_insertion_point(field_set:plugins.Request1.blob)
+  // @@protoc_insertion_point(field_set:plugins_v1.Request1.blob)
 }
 inline std::string* Request1::mutable_blob() {
-  // @@protoc_insertion_point(field_mutable:plugins.Request1.blob)
+  // @@protoc_insertion_point(field_mutable:plugins_v1.Request1.blob)
   return _internal_mutable_blob();
 }
 inline const std::string& Request1::_internal_blob() const {
@@ -376,26 +376,26 @@ inline void Request1::set_blob(std::string&& value) {
   
   blob_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:plugins.Request1.blob)
+  // @@protoc_insertion_point(field_set_rvalue:plugins_v1.Request1.blob)
 }
 inline void Request1::set_blob(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   blob_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:plugins.Request1.blob)
+  // @@protoc_insertion_point(field_set_char:plugins_v1.Request1.blob)
 }
 inline void Request1::set_blob(const void* value, size_t size) {
   
   blob_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:plugins.Request1.blob)
+  // @@protoc_insertion_point(field_set_pointer:plugins_v1.Request1.blob)
 }
 inline std::string* Request1::_internal_mutable_blob() {
   
   return blob_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 inline std::string* Request1::release_blob() {
-  // @@protoc_insertion_point(field_release:plugins.Request1.blob)
+  // @@protoc_insertion_point(field_release:plugins_v1.Request1.blob)
   
   return blob_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
@@ -406,7 +406,7 @@ inline void Request1::set_allocated_blob(std::string* blob) {
     
   }
   blob_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), blob);
-  // @@protoc_insertion_point(field_set_allocated:plugins.Request1.blob)
+  // @@protoc_insertion_point(field_set_allocated:plugins_v1.Request1.blob)
 }
 
 // -------------------------------------------------------------------
@@ -418,15 +418,15 @@ inline void Response1::clear_blob() {
   blob_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 inline const std::string& Response1::blob() const {
-  // @@protoc_insertion_point(field_get:plugins.Response1.blob)
+  // @@protoc_insertion_point(field_get:plugins_v1.Response1.blob)
   return _internal_blob();
 }
 inline void Response1::set_blob(const std::string& value) {
   _internal_set_blob(value);
-  // @@protoc_insertion_point(field_set:plugins.Response1.blob)
+  // @@protoc_insertion_point(field_set:plugins_v1.Response1.blob)
 }
 inline std::string* Response1::mutable_blob() {
-  // @@protoc_insertion_point(field_mutable:plugins.Response1.blob)
+  // @@protoc_insertion_point(field_mutable:plugins_v1.Response1.blob)
   return _internal_mutable_blob();
 }
 inline const std::string& Response1::_internal_blob() const {
@@ -440,26 +440,26 @@ inline void Response1::set_blob(std::string&& value) {
   
   blob_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:plugins.Response1.blob)
+  // @@protoc_insertion_point(field_set_rvalue:plugins_v1.Response1.blob)
 }
 inline void Response1::set_blob(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   blob_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:plugins.Response1.blob)
+  // @@protoc_insertion_point(field_set_char:plugins_v1.Response1.blob)
 }
 inline void Response1::set_blob(const void* value, size_t size) {
   
   blob_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:plugins.Response1.blob)
+  // @@protoc_insertion_point(field_set_pointer:plugins_v1.Response1.blob)
 }
 inline std::string* Response1::_internal_mutable_blob() {
   
   return blob_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 inline std::string* Response1::release_blob() {
-  // @@protoc_insertion_point(field_release:plugins.Response1.blob)
+  // @@protoc_insertion_point(field_release:plugins_v1.Response1.blob)
   
   return blob_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
@@ -470,7 +470,7 @@ inline void Response1::set_allocated_blob(std::string* blob) {
     
   }
   blob_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), blob);
-  // @@protoc_insertion_point(field_set_allocated:plugins.Response1.blob)
+  // @@protoc_insertion_point(field_set_allocated:plugins_v1.Response1.blob)
 }
 
 #ifdef __GNUC__
@@ -481,7 +481,7 @@ inline void Response1::set_allocated_blob(std::string* blob) {
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace plugins
+}  // namespace plugins_v1
 
 // @@protoc_insertion_point(global_scope)
 

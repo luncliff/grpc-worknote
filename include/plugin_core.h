@@ -12,7 +12,6 @@
 struct plugin_attr_t final {
     uint64_t version;
     gsl::cwzstring<> platform;
-    std::wstring workspace;
 };
 
 plugin_attr_t make_default_attr() noexcept;
@@ -38,9 +37,9 @@ auto get_blob(const plugin_response_t& res) noexcept
 using plugin_error_t = uint32_t;
 
 using plugin_serve_t = auto (*)(gsl::not_null<plugin_context_t*> p, //
-                                 const plugin_request_t& req,
-                                 plugin_response_t& res) noexcept
-                        -> plugin_error_t;
+                                const plugin_request_t& req,
+                                plugin_response_t& res) noexcept
+                       -> plugin_error_t;
 
 struct plugin_t final {
     gsl::not_null<plugin_create_t> on_create;

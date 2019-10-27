@@ -3,11 +3,11 @@
 
 #include <grpcpp/grpcpp.h>
 
-#include "service.grpc.pb.h"
 #include "loader.h"
+#include "service.grpc.pb.h"
 
 void serve(grpc::Server& launcher, grpc_impl::ServerCompletionQueue& queue,
-           plugins::Executor1::AsyncService& service,
+           plugins_v1::Executor1::AsyncService& service,
            plugin_t& plugin) noexcept(false);
 
 plugin_t make_plugin(loader_t& dll) noexcept(false);
@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) try {
     auto creds = grpc::InsecureServerCredentials();
     builder.AddListeningPort(argv[2], creds);
 
-    plugins::Executor1::AsyncService service{};
+    plugins_v1::Executor1::AsyncService service{};
     builder.RegisterService(&service);
 
     auto queue = builder.AddCompletionQueue();

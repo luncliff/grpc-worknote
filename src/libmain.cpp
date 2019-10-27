@@ -1,6 +1,6 @@
+#include "plugin_core.h"
 
 #include <filesystem>
-#include <plugin_core.h>
 
 namespace fs = std::filesystem;
 
@@ -10,7 +10,6 @@ plugin_attr_t make_default_attr() noexcept {
     plugin_attr_t attr{};
     attr.version = impl_version_code;
     attr.platform = PLATFORM_NAME;
-    attr.workspace = fs::current_path().generic_wstring();
     return attr;
 }
 

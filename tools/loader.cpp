@@ -32,7 +32,7 @@ auto loader_t ::error() noexcept -> const char* {
 #include <dlfcn.h>
 
 loader_t::~loader_t() noexcept {
-        ::dlclose(handle));
+    ::dlclose(handle);
 }
 
 loader_t loader_t::load(const char* file) noexcept(false) {
