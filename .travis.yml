@@ -1,4 +1,3 @@
-sudo: required
 
 git:
   submodules: true
@@ -6,51 +5,71 @@ git:
 
 language: cpp
 
-addons:
-  apt:
-    # https://docs.travis-ci.com/user/installing-dependencies#installing-packages-with-the-apt-addon
-    sources:
-      - sourceline: 'ppa:ubuntu-toolchain-r/test'
-    packages:
-      - g++-8
-      - curl
-      - unzip
-      - wget
-      - rsync
-      - ninja-build
-  homebrew:
-    packages:
-      - cmake
-      - ninja
-
 cache:
   directories:
     - ${HOME}/vcpkg/installed
 
+# sudo: required
+
+before_install:
+  - export CC=gcc-7 CXX=g++-7
+install:
+  - | # replace cmake
+    sudo rm -rf $(which cmake)
+    sudo bash ./scripts/install-cmake-3.15.sh
+    echo $(which cmake)
+  - | # prepare vcpkg
+    mkdir -p ${HOME}/vcpkg
+    pushd ${HOME}/vcpkg
+    git init
+    git remote add origin https://github.com/Microsoft/vcpkg.git
+    git fetch origin 2019.08
+    git checkout FETCH_HEAD
+    ./bootstrap-vcpkg.sh
+
+before_script:
+  - export CC=clang-8 CXX=clang-8
+  # triplet customization
+  - cp ${TRAVIS_BUILD_DIR}/x64-linux.cmake ./triplets/x64-linux.cmake
+script:
+  # install required packages
+  - ./vcpkg install protobuf ms-gsl fmt catch2
+  - ./vcpkg install openssl[core] c-ares[core] zlib[core]
+  - export LD_LIBRARY_PATH="$(pwd)/installed/x64-linux/lib"
+  - ./vcpkg install grpc
+  - popd
+  - mkdir -p build && pushd build 
+  - cmake .. -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake" 
+  - cmake --build . --target run_protoc_cpp
+  - cmake --build . --config debug
+
 matrix:
   include:
     - os: linux
+      dist: xenial
+      name: Ubuntu 16.04
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-8
+          packages:
+            - clang-8
+            - libc++abi-8-dev
+            - libc++-8-dev
+            - tree
+            - g++-7
+
+    - os: linux
       dist: bionic
-      compiler: gcc-8
-      before_install:
-        - g++-8 --version
-        - export CC=gcc-8 CXX=g++-8
-      install:
-        - sudo bash ./scripts/install-cmake-3.15.sh
-        - |
-          mkdir -p ${HOME}/vcpkg
-          pushd ${HOME}/vcpkg
-          git init
-          git remote add origin https://github.com/Microsoft/vcpkg.git
-          git fetch origin master
-          git checkout -b master origin/master
-          ./bootstrap-vcpkg.sh
-          ./vcpkg install grpc catch2 ms-gsl
-          popd
-      before_script:
-        - echo "$(which cmake)"
-        - mkdir -p build && pushd build
-      script:
-        - /usr/bin/cmake .. -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake"
-      after_script:
-        - popd
+      name: Ubuntu 18.04
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-bionic-8
+          packages:
+            - clang-8
+            - libc++abi-8-dev
+            - libc++-8-dev
+            - tree

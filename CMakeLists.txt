@@ -25,50 +25,6 @@ add_custom_command(
                     --grpc_out=${PROJECT_SOURCE_DIR}/static
                     --plugin="protoc-gen-grpc=${grpc_cpp_plugin_path}"
 )
-add_library(plugin_pb
-    static/service.pb.h
-    static/service.pb.cc
-)
-# add_dependencies(plugin_pb run_protoc_cpp)
-
-set_target_properties(plugin_pb
-PROPERTIES
-    CXX_STANDARD 17
-    WINDOWS_EXPORT_ALL_SYMBOLS True
-)
-target_include_directories(plugin_pb
-PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/static>
-)
-target_link_libraries(plugin_pb
-PUBLIC
-    ${CMAKE_DL_LIBS}
-    protobuf::libprotobuf protobuf::libprotobuf-lite
-)
-if(WIN32)
-    target_compile_definitions(plugin_pb
-    PUBLIC
-        WIN32_LEAN_AND_MEAN NOMINMAX
-        _WIN32_WINNT=0x0A00 # be explicit
-    )
-endif()
-
-add_library(plugin_grpc
-    static/service.grpc.pb.h
-    static/service.grpc.pb.cc
-)
-# add_dependencies(plugin_grpc run_protoc_cpp)
-
-set_target_properties(plugin_grpc
-PROPERTIES
-    CXX_STANDARD 17
-    WINDOWS_EXPORT_ALL_SYMBOLS True
-)
-target_link_libraries(plugin_grpc
-PUBLIC
-    ${CMAKE_DL_LIBS} plugin_pb
-    gRPC::gpr gRPC::grpc gRPC::grpc++ gRPC::grpc_cronet
-)
 
 add_library(plugin_core
     include/plugin_core.h
@@ -78,7 +34,14 @@ add_library(plugin_core
     src/plugin_impl.h
     src/plugin_impl.cpp
     src/plugin_mock.cpp
+
+    static/service.pb.h
+    static/service.pb.cc
+    static/service.grpc.pb.h
+    static/service.grpc.pb.cc
 )
+# add_dependencies(plugin_core run_protoc_cpp)
+
 set_target_properties(plugin_core
 PROPERTIES
     CXX_STANDARD 17
@@ -95,7 +58,9 @@ PUBLIC
 
 target_link_libraries(plugin_core
 PUBLIC
-    plugin_pb
+    ${CMAKE_DL_LIBS}
+    protobuf::libprotobuf # protobuf::libprotobuf-lite
+    gRPC::grpc++ # gRPC::gpr gRPC::grpc gRPC::grpc_cronet
 )
 
 target_compile_definitions(plugin_core
@@ -108,11 +73,20 @@ if(MSVC)
     PUBLIC
         /await
     )
-else()
+    target_compile_definitions(plugin_core
+    PUBLIC
+        WIN32_LEAN_AND_MEAN NOMINMAX
+        _WIN32_WINNT=0x0A00 # be explicit
+    )
+elseif(UNIX)
     target_compile_options(plugin_core
     PUBLIC
         -O0 -g
         -fPIC -stdlib=libc++ -fcoroutines-ts
+    )
+    target_link_libraries(plugin_core
+    PUBLIC
+        c++
     )
 endif()
 
@@ -151,7 +125,7 @@ PRIVATE
 )
 target_link_libraries(plugin_service
 PRIVATE
-    plugin_core plugin_grpc
+    plugin_core
 )
 
 #
@@ -184,7 +158,7 @@ install(FILES   ${PROJECT_SOURCE_DIR}/include/plugin_core.h
 )
 
 # https://stackoverflow.com/questions/33991581/install-name-tool-to-update-a-executable-to-search-for-dylib-in-mac-os-x
-install(TARGETS         plugin_pb plugin_grpc plugin_core plugin_service
+install(TARGETS         plugin_core plugin_service
         EXPORT          ${PROJECT_NAME}-config
         RUNTIME  DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
         LIBRARY  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
@@ -222,7 +196,7 @@ PRIVATE
 
 target_link_libraries(${TEST_SUITE}
 PRIVATE
-    plugin_core plugin_grpc
+    plugin_core
     Catch2::Catch2
 )
 add_test(test_platform_abi  ${TEST_SUITE} "[abi]")
