@@ -1,9 +1,9 @@
 
 #include <csignal>
 #include <gsl/gsl>
+#include <service.grpc.pb.h>
 
 #include "grpc_shared.h"
-#include "service.grpc.pb.h"
 
 using namespace std;
 
@@ -63,9 +63,6 @@ void consume_queue(grpc::Server& launcher,
 
     // hijack some signals. it will break the completion queue
     signal(SIGTERM, on_signal_change_sig_status);
-
-    puts("raising siganl ...\n");
-    raise(SIGTERM); // trigger termination immediately
 
     void* user_data = nullptr;
     bool ok = false;

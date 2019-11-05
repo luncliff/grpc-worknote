@@ -1,7 +1,6 @@
+#include <system_error>
 
 #include "loader.h"
-
-#include <system_error>
 
 #if __has_include(<Windows.h>)
 #define WIN32_LEAN_AND_MEAN

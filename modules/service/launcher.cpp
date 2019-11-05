@@ -1,9 +1,9 @@
 
 #include <cstdlib>
 #include <grpcpp/grpcpp.h>
+#include <service.grpc.pb.h>
 
 #include "loader.h"
-#include "service.grpc.pb.h"
 
 void serve(grpc::Server& launcher, //
            grpc_impl::ServerCompletionQueue& queue,

@@ -13,8 +13,6 @@ using namespace std::experimental;
 
 #endif
 
-bool is_shutdowned() noexcept;
-
 using suspend_callback_t = function<void(coroutine_handle<void>)>;
 
 class suspend_on_completion_queue_t {

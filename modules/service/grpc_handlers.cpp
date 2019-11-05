@@ -7,6 +7,8 @@
 using namespace std;
 using namespace grpc;
 
+bool is_shutdowned() noexcept;
+
 auto until(function<void(coroutine_handle<void>)>&& on_suspend) noexcept {
     return on_suspend;
 }
@@ -30,7 +32,8 @@ auto serve_invoke1(grpc_impl::ServerCompletionQueue& queue,
     });
 
     svc_v1::Response res{};
-    grpc::Status status{};
+    grpc::Status status{grpc::StatusCode::OK, svc_v1::SH::service_full_name()};
+    res.set_blob(req.blob());
 
     co_await until([&](coroutine_handle<void> coro) {
         responder.Finish(res, status, coro.address());
@@ -57,7 +60,8 @@ auto serve_invoke2(grpc_impl::ServerCompletionQueue& queue,
     });
 
     svc_v1::Response res{};
-    grpc::Status status{};
+    grpc::Status status{grpc::StatusCode::OK, svc_v1::SH::service_full_name()};
+    res.set_blob(req.blob());
 
     for (auto i = 0u; i < 1u; ++i)
         co_await until([&](coroutine_handle<void> coro) {
@@ -87,14 +91,13 @@ auto serve_invoke3(grpc_impl::ServerCompletionQueue& queue,
 
     svc_v1::Request req{};
     svc_v1::Response res{};
-    grpc::Status status{};
+    grpc::Status status{grpc::StatusCode::OK, svc_v1::SH::service_full_name()};
 
     while (co_await until([&](coroutine_handle<void> coro) {
         reader.Read(&req, coro.address());
     })) {
-        // on read ...
+        res.set_blob(req.blob()); // will return the last one
     }
-
     co_await until([&](coroutine_handle<void> coro) {
         reader.Finish(res, status, coro.address());
     });
@@ -119,16 +122,18 @@ auto serve_invoke4(grpc_impl::ServerCompletionQueue& queue,
 
     svc_v1::Request req{};
     svc_v1::Response res{};
-    grpc::Status status{};
+    grpc::Status status{grpc::StatusCode::OK, svc_v1::SH::service_full_name()};
 
-    co_await until([&](coroutine_handle<void> coro) {
-        // read one time ...
-        link.Read(&req, coro.address());
-    });
-    co_await until([&](coroutine_handle<void> coro) {
-        // write one time ...
-        link.Write(res, coro.address());
-    });
+    for (; // read one time ...
+         co_await until([&](coroutine_handle<void> coro) {
+             link.Read(&req, coro.address());
+         });
+         // write one time ...
+         co_await until([&](coroutine_handle<void> coro) {
+             link.Write(res, coro.address());
+         })) {
+        res.set_blob(req.blob()); // will return the last one
+    }
     co_await until([&](coroutine_handle<void> coro) {
         // finish the serving ...
         link.Finish(status, coro.address());
