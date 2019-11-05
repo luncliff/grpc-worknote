@@ -5,7 +5,8 @@ find_program(proto_compiler_path
     PATHS   ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools/protobuf
     # NO_DEFAULT_PATH 
 )
-message(STATUS "using protoc: ${proto_compiler_path}")
+message(STATUS "Tools")
+message(STATUS "  protoc            : ${proto_compiler_path}")
 
 # grpc plugin: c++
 find_program(grpc_cpp_plugin_path
@@ -13,7 +14,7 @@ find_program(grpc_cpp_plugin_path
     PATHS   ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools/grpc
     # NO_DEFAULT_PATH 
 )
-message(STATUS "using grpc_cpp_plugin: ${grpc_cpp_plugin_path}")
+message(STATUS "  grpc_cpp_plugin   : ${grpc_cpp_plugin_path}")
 
 # code generation: c++
 add_custom_target(run_protoc_cpp
@@ -33,7 +34,7 @@ find_program(grpc_python_plugin_path
             ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools/grpc
     # NO_DEFAULT_PATH 
 )
-message(STATUS "using grpc_python_plugin: ${grpc_python_plugin_path}")
+message(STATUS "  grpc_python_plugin: ${grpc_python_plugin_path}")
 
 add_custom_target(run_protoc_python
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -52,7 +53,7 @@ find_program(grpc_node_plugin_path
             ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools/grpc
     # NO_DEFAULT_PATH 
 )
-message(STATUS "using grpc_node_plugin: ${grpc_node_plugin_path}")
+message(STATUS "  grpc_node_plugin  : ${grpc_node_plugin_path}")
 
 add_custom_target(run_protoc_nodejs
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -70,7 +71,7 @@ find_program(grpc_csharp_plugin_path
             ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools/grpc
     # NO_DEFAULT_PATH 
 )
-message(STATUS "using grpc_csharp_plugin: ${grpc_csharp_plugin_path}")
+message(STATUS "  grpc_csharp_plugin: ${grpc_csharp_plugin_path}")
 
 add_custom_target(run_protoc_csharp
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -91,7 +92,7 @@ if (DEFINED $ENV{GOROOT})
                 ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools/grpc
         NO_DEFAULT_PATH 
     )
-    message(STATUS "using grpc_go_plugin: ${grpc_go_plugin_path}")
+    message(STATUS "  grpc_go_plugin:     ${grpc_go_plugin_path}")
 
     add_custom_target(run_protoc_go
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -104,3 +105,5 @@ if (DEFINED $ENV{GOROOT})
                         --plugin="protoc-gen-go=${grpc_go_plugin_path}"
     )
 endif()
+
+message(STATUS)

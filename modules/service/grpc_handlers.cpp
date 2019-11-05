@@ -1,5 +1,5 @@
 
-#include "../src/plugin_impl.h"
+#include <gsl/gsl>
 #include <service.grpc.pb.h>
 
 #include "grpc_shared.h"
@@ -11,32 +11,25 @@ auto until(function<void(coroutine_handle<void>)>&& on_suspend) noexcept {
     return on_suspend;
 }
 
-const plugin_t& get_current_plugin() noexcept;
-
 auto serve_invoke1(grpc_impl::ServerCompletionQueue& queue,
-                   plugins_v1::Executor1::AsyncService& service,
-                   gsl::not_null<plugin_context_t*> pctx) noexcept(false)
+                   svc_v1::SH::AsyncService& service) noexcept(false)
     -> service_coroutine_t {
-    auto& plugin = get_current_plugin();
-    co_return grpc::Status{};
-
-    // serve next request unless the launcher is shutdowned
-    auto on_return = gsl::finally([&, ctx = pctx.get()]() {
+    // serve next request unless the program is shutdowned
+    auto on_return = gsl::finally([&]() {
         if (is_shutdowned() == false)
-            serve_invoke1(queue, service, ctx);
+            serve_invoke1(queue, service);
     });
-
+    // prepare to receive 1 request
     ServerContext sctx{};
-    ServerAsyncResponseWriter<plugins_v1::Response1> responder{&sctx};
-
-    plugin_request_t req{};
+    ServerAsyncResponseWriter<svc_v1::Response> responder{&sctx};
+    svc_v1::Request req{};
 
     co_await until([&](coroutine_handle<void> coro) {
         service.RequestInvoke1(&sctx, &req, &responder, &queue, &queue,
                                coro.address());
     });
 
-    plugin_response_t res{};
+    svc_v1::Response res{};
     grpc::Status status{};
 
     co_await until([&](coroutine_handle<void> coro) {
@@ -46,29 +39,24 @@ auto serve_invoke1(grpc_impl::ServerCompletionQueue& queue,
 }
 
 auto serve_invoke2(grpc_impl::ServerCompletionQueue& queue,
-                   plugins_v1::Executor1::AsyncService& service,
-                   gsl::not_null<plugin_context_t*> pctx) noexcept(false)
+                   svc_v1::SH::AsyncService& service) noexcept(false)
     -> service_coroutine_t {
-    auto& plugin = get_current_plugin();
-    co_return grpc::Status{};
-
-    // serve next request unless the launcher is shutdowned
-    auto on_return = gsl::finally([&, ctx = pctx.get()]() {
+    // serve next request unless the program is shutdowned
+    auto on_return = gsl::finally([&]() {
         if (is_shutdowned() == false)
-            serve_invoke1(queue, service, ctx);
+            serve_invoke1(queue, service);
     });
 
     ServerContext sctx{};
-    ServerAsyncWriter<plugins_v1::Response1> writer{&sctx};
-
-    plugin_request_t req{};
+    ServerAsyncWriter<svc_v1::Response> writer{&sctx};
+    svc_v1::Request req{};
 
     co_await until([&](coroutine_handle<void> coro) {
         service.RequestInvoke2(&sctx, &req, &writer, &queue, &queue,
                                coro.address());
     });
 
-    plugin_response_t res{};
+    svc_v1::Response res{};
     grpc::Status status{};
 
     for (auto i = 0u; i < 1u; ++i)
@@ -82,28 +70,23 @@ auto serve_invoke2(grpc_impl::ServerCompletionQueue& queue,
 }
 
 auto serve_invoke3(grpc_impl::ServerCompletionQueue& queue,
-                   plugins_v1::Executor1::AsyncService& service,
-                   gsl::not_null<plugin_context_t*> pctx) noexcept(false)
+                   svc_v1::SH::AsyncService& service) noexcept(false)
     -> service_coroutine_t {
-    auto& plugin = get_current_plugin();
-    co_return grpc::Status{};
-
-    // serve next request unless the launcher is shutdowned
-    auto on_return = gsl::finally([&, ctx = pctx.get()]() {
+    // serve next request unless the program is shutdowned
+    auto on_return = gsl::finally([&]() {
         if (is_shutdowned() == false)
-            serve_invoke1(queue, service, ctx);
+            serve_invoke1(queue, service);
     });
 
     ServerContext sctx{};
-    ServerAsyncReader<plugins_v1::Response1, plugins_v1::Request1> reader{
-        &sctx};
+    ServerAsyncReader<svc_v1::Response, svc_v1::Request> reader{&sctx};
 
     co_await until([&](coroutine_handle<void> coro) {
         service.RequestInvoke3(&sctx, &reader, &queue, &queue, coro.address());
     });
 
-    plugin_request_t req{};
-    plugin_response_t res{};
+    svc_v1::Request req{};
+    svc_v1::Response res{};
     grpc::Status status{};
 
     while (co_await until([&](coroutine_handle<void> coro) {
@@ -119,28 +102,23 @@ auto serve_invoke3(grpc_impl::ServerCompletionQueue& queue,
 }
 
 auto serve_invoke4(grpc_impl::ServerCompletionQueue& queue,
-                   plugins_v1::Executor1::AsyncService& service,
-                   gsl::not_null<plugin_context_t*> pctx) noexcept(false)
+                   svc_v1::SH::AsyncService& service) noexcept(false)
     -> service_coroutine_t {
-    auto& plugin = get_current_plugin();
-    co_return grpc::Status{};
-
-    // serve next request unless the launcher is shutdowned
-    auto on_return = gsl::finally([&, ctx = pctx.get()]() {
+    // serve next request unless the program is shutdowned
+    auto on_return = gsl::finally([&]() {
         if (is_shutdowned() == false)
-            serve_invoke1(queue, service, ctx);
+            serve_invoke1(queue, service);
     });
 
     grpc::ServerContext sctx{};
-    ServerAsyncReaderWriter<plugins_v1::Response1, plugins_v1::Request1> link{
-        &sctx};
+    ServerAsyncReaderWriter<svc_v1::Response, svc_v1::Request> link{&sctx};
 
     co_await until([&](coroutine_handle<void> coro) {
         service.RequestInvoke4(&sctx, &link, &queue, &queue, coro.address());
     });
 
-    plugin_request_t req{};
-    plugin_response_t res{};
+    svc_v1::Request req{};
+    svc_v1::Response res{};
     grpc::Status status{};
 
     co_await until([&](coroutine_handle<void> coro) {

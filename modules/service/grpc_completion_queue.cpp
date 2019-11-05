@@ -1,8 +1,8 @@
 
 #include <csignal>
+#include <gsl/gsl>
 
 #include "grpc_shared.h"
-#include "plugin_core.h"
 #include "service.grpc.pb.h"
 
 using namespace std;
