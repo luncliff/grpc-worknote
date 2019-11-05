@@ -1,4 +1,21 @@
 
+add_custom_command(
+    COMMENT     "generating from 'service.proto' ..."
+    OUTPUT      ${PROJECT_SOURCE_DIR}/static/service.pb.h
+                ${PROJECT_SOURCE_DIR}/static/service.pb.cc
+                ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.h
+                ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.cc
+    # WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMAND     ${proto_compiler_path} --version
+    COMMAND     ${proto_compiler_path} ${PROJECT_SOURCE_DIR}/service.proto 
+                    --proto_path=${PROJECT_SOURCE_DIR}
+                    --cpp_out=${PROJECT_SOURCE_DIR}/static
+    COMMAND     ${proto_compiler_path} ${PROJECT_SOURCE_DIR}/service.proto 
+                    --proto_path=${PROJECT_SOURCE_DIR}
+                    --grpc_out=${PROJECT_SOURCE_DIR}/static
+                    --plugin="protoc-gen-grpc=${grpc_cpp_plugin_path}"
+)
+
 add_library(core
     libmain.cpp
     ${PROJECT_SOURCE_DIR}/static/service.pb.h
@@ -13,17 +30,24 @@ PROPERTIES
     WINDOWS_EXPORT_ALL_SYMBOLS True
 )
 
+# set(VCPKG_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
+# set(VCPKG_LIB_DIR     ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib)
+
 target_include_directories(core
 PRIVATE
     ${PROJECT_SOURCE_DIR}/static
 PUBLIC
+    ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
 )
 
+target_link_directories(core
+PUBLIC
+    ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
+)
+
 target_link_libraries(core
-PRIVATE
-    vcpkg_meta
 PUBLIC
     ${CMAKE_DL_LIBS}
     protobuf::libprotobuf # protobuf::libprotobuf-lite

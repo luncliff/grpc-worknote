@@ -11,23 +11,6 @@ include(project_info)
 include(vcpkg_as_target) # target: vcpkg_meta
 include(grpc_codegen_targets)
 
-add_custom_command(
-    COMMENT     "generating from 'service.proto' ..."
-    OUTPUT      ${PROJECT_SOURCE_DIR}/static/service.pb.h
-                ${PROJECT_SOURCE_DIR}/static/service.pb.cc
-                ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.h
-                ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.cc
-    # WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    COMMAND     ${proto_compiler_path} --version
-    COMMAND     ${proto_compiler_path} ${PROJECT_SOURCE_DIR}/service.proto 
-                    --proto_path=${PROJECT_SOURCE_DIR}
-                    --cpp_out=${PROJECT_SOURCE_DIR}/static
-    COMMAND     ${proto_compiler_path} ${PROJECT_SOURCE_DIR}/service.proto 
-                    --proto_path=${PROJECT_SOURCE_DIR}
-                    --grpc_out=${PROJECT_SOURCE_DIR}/static
-                    --plugin="protoc-gen-grpc=${grpc_cpp_plugin_path}"
-)
-
 add_subdirectory(modules/core)
 add_subdirectory(modules/service)
 
