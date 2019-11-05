@@ -8,7 +8,7 @@ find_package(gRPC           CONFIG REQUIRED)
 # run protobuf compiler and generate files
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include(project_info)
-include(vcpkg_as_target) # target: vcpkg_meta
+include(vcpkg_as_target)
 include(grpc_codegen_targets)
 
 add_subdirectory(modules/core)

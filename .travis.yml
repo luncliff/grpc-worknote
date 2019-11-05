@@ -39,7 +39,9 @@ script:
   - ./vcpkg install grpc
   - popd
   - mkdir -p build && pushd build 
-  - cmake .. -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake" 
+  - cmake .. 
+    -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake" 
+  # codegen and build
   - cmake --build . --target run_protoc_cpp
   - cmake --build . --config debug
 

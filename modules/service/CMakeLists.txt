@@ -19,5 +19,5 @@ PRIVATE
 )
 target_link_libraries(service
 PRIVATE
-    core vcpkg_meta
+    core
 )
