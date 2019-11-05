@@ -1,4 +1,5 @@
-
+.gradle
+gradle*
 .vscode
 [Bb]uild
 install
