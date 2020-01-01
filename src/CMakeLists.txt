@@ -16,67 +16,68 @@ add_custom_command(
                     --plugin="protoc-gen-grpc=${grpc_cpp_plugin_path}"
 )
 
-add_library(core
-    libmain.cpp
+add_executable(rpc_service
+    main.cpp  
+    signal.cpp
+    serve_queue.cpp serve.cpp
     ${PROJECT_SOURCE_DIR}/static/service.pb.h
     ${PROJECT_SOURCE_DIR}/static/service.pb.cc
     ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.h
     ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.cc
 )
 
-set_target_properties(core
+set_target_properties(rpc_service
 PROPERTIES
-    CXX_STANDARD 20
-    WINDOWS_EXPORT_ALL_SYMBOLS True
+    CXX_STANDARD 20     # requires CMake 3.12+
 )
 
-# set(VCPKG_INCLUDE_DIR ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
-# set(VCPKG_LIB_DIR     ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib)
-
-target_include_directories(core
+target_include_directories(rpc_service
 PRIVATE
     ${PROJECT_SOURCE_DIR}/static
 PUBLIC
-    ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
 )
 
-target_link_directories(core
-PUBLIC
-    ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/lib
-)
-
-target_link_libraries(core
+target_link_libraries(rpc_service
 PUBLIC
     ${CMAKE_DL_LIBS}
-    protobuf::libprotobuf # protobuf::libprotobuf-lite
-    gRPC::grpc++ # gRPC::gpr gRPC::grpc gRPC::grpc_cronet
+    vcpkg_meta
+    protobuf::libprotobuf
+    gRPC::grpc++
 )
 
-target_compile_definitions(core
+target_compile_definitions(rpc_service
 PRIVATE
     PLATFORM_NAME=L"${CMAKE_SYSTEM_NAME}"
 )
 
-if(MSVC)
-    target_compile_options(core
-    PUBLIC
-        /await
+if(WIN32)
+    set_target_properties(rpc_service
+    PROPERTIES
+        WINDOWS_EXPORT_ALL_SYMBOLS True
     )
-    target_compile_definitions(core
-    PUBLIC
+    target_compile_definitions(rpc_service
+    PRIVATE
         WIN32_LEAN_AND_MEAN NOMINMAX
         _WIN32_WINNT=0x0A00 # be explicit
     )
-elseif(UNIX)
-    target_compile_options(core
-    PUBLIC
-        -O0 -g
+elseif(APPLE)
+    target_link_libraries(rpc_service
+    PRIVATE
+        c++
+    )
+endif()
+
+if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
+    target_compile_options(rpc_service
+    PRIVATE
+        -fmodules-ts
         -fPIC -stdlib=libc++ -fcoroutines-ts
     )
-    target_link_libraries(core
+elseif(MSVC)
+    target_compile_options(rpc_service
     PUBLIC
-        c++
+        /await
     )
 endif()

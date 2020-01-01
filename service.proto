@@ -6,9 +6,7 @@
 //    https://developers.google.com/protocol-buffers/docs/proto3
 //
 syntax = "proto3";
-
-// import "google/protobuf/empty.proto";
-package svc_v1;
+package v1;
 
 message Request {
   bytes blob = 1;
@@ -18,14 +16,14 @@ message Response {
   bytes blob = 1;
 }
 
-// SH: Service Host
-service SH {
-  rpc Invoke1(Request) returns (Response) {
+service Worker {
+  rpc Method1(Request) returns (Response) {
   }
-  rpc Invoke2(Request) returns (stream Response) {
+  rpc Method2(Request) returns (stream Response) {
   }
-  rpc Invoke3(stream Request) returns (Response) {
+  rpc Method3(stream Request) returns (Response) {
   }
-  rpc Invoke4(stream Request) returns (stream Response) {
+  rpc Method4(stream Request) returns (stream Response) {
   }
 }
+ 

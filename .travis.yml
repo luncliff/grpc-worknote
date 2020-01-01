@@ -1,7 +1,3 @@
-#
-# Travis CI config is only for Ubuntu environment
-#
-
 git:
   submodules: true
   depth: 3
@@ -12,69 +8,37 @@ cache:
   directories:
     - ${HOME}/vcpkg/installed
 
-# sudo: required
+os: osx
+
+addons:
+  homebrew:
+    packages:
+      - cmake
+      - gcc@9
 
 matrix:
+  allow_failures:
+    # /usr/local/Cellar/gcc/9.2.0_2/lib/gcc/9/gcc/x86_64-apple-darwin18/9.2.0/include-fixed/stdio.h:222:7: error: conflicting declaration of 'char* ctermid(char*)' with 'C' linkage
+    - osx_image: xcode11.2
   include:
-    - os: linux
-      dist: xenial
-      name: Ubuntu 16.04
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-8
-          packages:
-            - clang-8
-            - libc++abi-8-dev
-            - libc++-8-dev
-            - tree
-            - g++-7
+    - osx_image: xcode10.3
+    - osx_image: xcode11.2
 
-    - os: linux
-      dist: bionic
-      name: Ubuntu 18.04
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-bionic-8
-          packages:
-            - clang-8
-            - libc++abi-8-dev
-            - libc++-8-dev
-            - tree
-
-before_install:
-  - export CC=gcc-7 CXX=g++-7
 install:
-  - | # replace cmake
-    sudo rm -rf $(which cmake)
-    sudo bash ./scripts/install-cmake-3.15.sh
-    echo $(which cmake)
-  - | # prepare vcpkg
-    mkdir -p ${HOME}/vcpkg
-    pushd ${HOME}/vcpkg
+  - mkdir -p ${HOME}/vcpkg && pushd ${HOME}/vcpkg
+  - | # build vcpkg
     git init
     git remote add origin https://github.com/Microsoft/vcpkg.git
-    git fetch origin 2019.08
+    git fetch origin 2019.11
     git checkout FETCH_HEAD
-    ./bootstrap-vcpkg.sh
-
-before_script:
-  - export CC=clang-8 CXX=clang-8
-  # triplet customization
-  - cp ${TRAVIS_BUILD_DIR}/x64-linux.cmake ./triplets/x64-linux.cmake
-script:
+    CC=gcc-9 CXX=g++-9 ./bootstrap-vcpkg.sh
   # install required packages
-  - ./vcpkg install protobuf ms-gsl fmt catch2
-  - ./vcpkg install openssl[core] c-ares[core] zlib[core]
-  - export LD_LIBRARY_PATH="$(pwd)/installed/x64-linux/lib"
-  - ./vcpkg install grpc
+  - ./vcpkg install ms-gsl tbb grpc gtest
   - popd
+
+script:
   - mkdir -p build && pushd build
   - cmake ..
     -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake"
   # codegen and build
-  - cmake --build . --target run_protoc_cpp
   - cmake --build . --config debug

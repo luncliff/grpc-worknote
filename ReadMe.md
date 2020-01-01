@@ -39,11 +39,11 @@ $ cmake --build . --target generate_grpc_files_cpp
 ```
 
 Current codegen target list:
-* `run_protoc_cpp`
-* `run_protoc_python`
-* `run_protoc_nodejs`
-* `run_protoc_csharp`
-* `run_protoc_go`
+* `codegen_cpp`
+* `codegen_python`
+* `codegen_nodejs`
+* `codegen_csharp`
+* `codegen_go`
 
 Especially, Go requires additional setup to acquire code generator.
 
