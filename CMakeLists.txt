@@ -21,14 +21,11 @@ include(codegen)
 
 add_subdirectory(src)
 
-return()
-
 #
 # ... testing comes here ...
 #
-if(NOT CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+if(NOT BUILD_TESTING)
     return()
 endif()
-
 enable_testing()
 add_subdirectory(test)

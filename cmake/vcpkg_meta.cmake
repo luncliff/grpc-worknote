@@ -11,6 +11,10 @@ target_include_directories(vcpkg_meta
 INTERFACE
     ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include
 )
+target_link_libraries(vcpkg_meta
+INTERFACE
+    ${CMAKE_DL_LIBS}
+)
 if(CMAKE_BUILD_TYPE MATCHES Rel) # for release
     target_link_directories(vcpkg_meta
     INTERFACE
@@ -22,3 +26,16 @@ else() # for debug
         ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/debug/lib
     )
 endif()
+
+get_target_property(VCPKG_INCLUDE_DIRS vcpkg_meta 
+    INTERFACE_INCLUDE_DIRECTORIES
+)
+get_target_property(VCPKG_LIB_DIRS vcpkg_meta 
+    INTERFACE_LINK_DIRECTORIES
+)
+get_target_property(VCPKG_LIBS vcpkg_meta 
+    INTERFACE_LINK_LIBRARIES
+)
+get_target_property(VCPKG_DEFINITIONS vcpkg_meta 
+    INTERFACE_COMPILE_DEFINITIONS
+)

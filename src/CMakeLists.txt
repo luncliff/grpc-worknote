@@ -33,22 +33,29 @@ PROPERTIES
 
 target_include_directories(rpc_service
 PRIVATE
+    ${VCPKG_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/static
 PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
 )
 
+target_link_directories(rpc_service
+PRIVATE
+    ${VCPKG_LIB_DIRS}
+)
+
 target_link_libraries(rpc_service
+PRIVATE
+    ${VCPKG_LIBS}
 PUBLIC
-    ${CMAKE_DL_LIBS}
-    vcpkg_meta
     protobuf::libprotobuf
     gRPC::grpc++
 )
 
 target_compile_definitions(rpc_service
 PRIVATE
+    ${VCPKG_DEFINITIONS}
     PLATFORM_NAME=L"${CMAKE_SYSTEM_NAME}"
 )
 
