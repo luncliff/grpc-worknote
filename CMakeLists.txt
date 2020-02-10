@@ -13,19 +13,29 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include(vcpkg_meta)
 
 # see 'codegen_xx.cmake' files in cmake/
-#   * codegen_cpp
-#   * codegen_csharp
-#   * codegen_python
-#   * codegen_nodejs
-include(codegen)
+set(VCPKG_TOOL_DIR ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools)
+# find protobuf compiler in vcpkg
+find_program(proto_compiler_path
+    NAMES   protoc.exe protoc
+    PATHS   ${VCPKG_TOOL_DIR}/protobuf
+    # NO_DEFAULT_PATH 
+)
+file(RELATIVE_PATH short_path ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET} ${proto_compiler_path})
+message(STATUS "using protoc\t: ${short_path}")
+include(codegen_cpp)
+include(codegen_python)
+include(codegen_nodejs)
+include(codegen_csharp)
+if (DEFINED $ENV{GOPATH})
+    include(codegen_go)
+endif()
 
 add_subdirectory(src)
+add_subdirectory(tools)
 
-#
-# ... testing comes here ...
-#
-if(NOT BUILD_TESTING)
-    return()
-endif()
-enable_testing()
-add_subdirectory(test)
+install(TARGETS     rpc_impl 
+                    rpc_service
+        RUNTIME  DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+        # LIBRARY  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+        # ARCHIVE  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+)

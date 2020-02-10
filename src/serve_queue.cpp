@@ -1,9 +1,8 @@
-
 #include <chrono>
 #include <cstdio>
+#include <gsl/gsl>
 
 #include <grpcpp/grpcpp.h>
-#include <gsl/gsl>
 
 void serve_user_data(void* user_data, bool ok) noexcept(false);
 
@@ -15,12 +14,12 @@ void drain_queue(grpc::CompletionQueue& cq) noexcept(false) {
         serve_user_data(user_data, ok);
 }
 
-using namespace std::chrono;
-
-bool drain_queue_once(grpc::CompletionQueue& cq,
-                      system_clock::time_point deadline) noexcept(false) {
+bool drain_queue_once(
+    grpc::CompletionQueue& cq,
+    std::chrono::system_clock::time_point deadline) noexcept(false) {
     void* user_data = nullptr;
     bool ok = false;
+
     const auto status = cq.AsyncNext(&user_data, &ok, deadline);
     switch (status) {
     case grpc_impl::CompletionQueue::NextStatus::SHUTDOWN:
@@ -51,15 +50,12 @@ void serve_queue(grpc::CompletionQueue& cq, grpc::Server& s) noexcept(false) {
         return drain_queue(cq);
     });
 
-    auto make_deadline = []() {
-        using namespace std::chrono;
-        using namespace std::chrono_literals;
-        return system_clock::now() + 1s;
-    };
+    using namespace std::chrono;
+    using namespace std::chrono_literals;
 
-    // fetch and resume with signal checking, timeout
+    // fetch(with timeout) and resume with signal checking
     watch_signals();
     while (is_signaled() == false)
-        if (auto shutdowned = drain_queue_once(cq, make_deadline()))
-            return;
+        if (auto shutdowned = drain_queue_once(cq, system_clock::now() + 1s))
+            break;
 }
