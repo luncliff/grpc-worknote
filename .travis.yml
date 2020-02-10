@@ -15,14 +15,11 @@ addons:
     packages:
       - cmake
       - gcc@9
+      - python3
 
 matrix:
-  allow_failures:
-    # /usr/local/Cellar/gcc/9.2.0_2/lib/gcc/9/gcc/x86_64-apple-darwin18/9.2.0/include-fixed/stdio.h:222:7: error: conflicting declaration of 'char* ctermid(char*)' with 'C' linkage
-    - osx_image: xcode11.2
   include:
-    - osx_image: xcode10.3
-    - osx_image: xcode11.2
+    - osx_image: xcode10.3 # macOS 10.14
 
 install:
   - mkdir -p ${HOME}/vcpkg && pushd ${HOME}/vcpkg
@@ -42,3 +39,6 @@ script:
     -DCMAKE_TOOLCHAIN_FILE="${HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake"
   # codegen and build
   - cmake --build . --config debug
+
+after_success:
+  - pip install -r requirements.txt

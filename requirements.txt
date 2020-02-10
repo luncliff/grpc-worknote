@@ -1,0 +1,13 @@
+setuptools>=41.0.0
+
+doxybook
+mkdocs
+
+# https://grpc.github.io/grpc/python/index.html
+protobuf==3.10
+grpcio==1.25 
+grpcio-tools
+
+# https://pypi.org/project/pytest-asyncio/
+pytest
+pytest-asyncio 
