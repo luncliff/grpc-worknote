@@ -33,9 +33,9 @@ get_target_property(VCPKG_INCLUDE_DIRS vcpkg_meta
 get_target_property(VCPKG_LIB_DIRS vcpkg_meta 
     INTERFACE_LINK_DIRECTORIES
 )
-get_target_property(VCPKG_LIBS vcpkg_meta 
-    INTERFACE_LINK_LIBRARIES
-)
-get_target_property(VCPKG_DEFINITIONS vcpkg_meta 
-    INTERFACE_COMPILE_DEFINITIONS
-)
+# get_target_property(VCPKG_LIBS vcpkg_meta 
+#     INTERFACE_LINK_LIBRARIES
+# )
+# get_target_property(VCPKG_DEFINITIONS vcpkg_meta 
+#     INTERFACE_COMPILE_DEFINITIONS
+# )
