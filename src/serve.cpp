@@ -1,3 +1,8 @@
+/**
+ * @file serve.cpp
+ * @author luncliff (luncliff@gmail.com)
+ * @brief Server methods' implementation
+ */
 #include <gsl/gsl>
 #include <new>
 
@@ -15,8 +20,18 @@ using namespace std::experimental;
 
 #endif
 
+/**
+ * @brief Callback to pass `coroutine_handle<void>` to gRPC completion queue
+ * @details In this implementation,
+ * `coroutine_handle<void>` becomes an user data for gRPC completion queue
+ *
+ * @see std::function<T>
+ */
 using rpc_callback_t = function<void(coroutine_handle<void>)>;
 
+/**
+ * @brief User data for gRPC completion queue in this implementation
+ */
 class rpc_context_t {
   protected:
     rpc_callback_t callback{};
@@ -43,9 +58,11 @@ class rpc_routine_t final {
   public:
     class promise_type final : public rpc_context_t {
       public:
+        /** @brief never suspend for the coroutine's initial suspend */
         suspend_never initial_suspend() noexcept {
             return {};
         }
+        /** @brief never suspend for the coroutine's final suspend */
         suspend_never final_suspend() noexcept {
             return {};
         }
@@ -55,8 +72,17 @@ class rpc_routine_t final {
         auto get_return_object() noexcept {
             return rpc_routine_t{this};
         }
+        /**
+         * @brief `co_return` statement won't take argument
+         */
         void return_void() noexcept {
         }
+
+        /**
+         * @brief Changes `rpc_callback_t` to `rpc_context_t`
+         * @details Save the given functor to current context
+         * @see rpc_callback_t
+         */
         auto await_transform(rpc_callback_t&& fn) noexcept -> rpc_context_t& {
             this->callback = move(fn);
             return *this;
@@ -67,6 +93,12 @@ class rpc_routine_t final {
     explicit rpc_routine_t(promise_type*) noexcept(false){};
 };
 
+/**
+ * @brief Recognize the `user_data` and resumes the task
+ *
+ * @param user_data
+ * @param ok        if `false`, the operation is failed (e.g. cancelled)
+ */
 void serve_user_data(void* user_data, bool ok) noexcept(false) {
     using promise_t = rpc_routine_t::promise_type;
     auto task = coroutine_handle<promise_t>::from_address(user_data);
@@ -79,6 +111,7 @@ void serve_user_data(void* user_data, bool ok) noexcept(false) {
 
 using namespace grpc;
 
+// alias to shorten the code
 using grpc_server_queue_t = grpc_impl::ServerCompletionQueue;
 auto serve_method1(grpc_server_queue_t& queue) noexcept(false) -> rpc_routine_t;
 auto serve_method2(grpc_server_queue_t& queue) noexcept(false) -> rpc_routine_t;
@@ -86,6 +119,17 @@ auto serve_method3(grpc_server_queue_t& queue) noexcept(false) -> rpc_routine_t;
 auto serve_method4(grpc_server_queue_t& queue) noexcept(false) -> rpc_routine_t;
 
 void serve_queue(grpc::CompletionQueue& cq, grpc::Server& s) noexcept(false);
+
+/**
+ * @brief Prepare to handle the methods and start serving with the queue
+ * @param s
+ * @param queue
+ * @see 'service.proto'
+ * @details
+ *
+ * * The grpc server will be shutdowned when a signal is raised
+ *
+ */
 void serve(grpc_impl::Server& s, //
            grpc_impl::ServerCompletionQueue& queue) noexcept(false) {
 
@@ -98,19 +142,38 @@ void serve(grpc_impl::Server& s, //
     return serve_queue(queue, s);
 }
 
-v1::Worker::AsyncService service{};
+/**
+ * @brief singleton instance of the `v1::Worker` service
+ */
+v1::Worker::AsyncService service1{};
 
+/**
+ * @brief Register internal service implementation to given `ServerBuilder`
+ * @details The function registers service but won't trigger start/creation
+ * @param builder
+ */
 void register_impl(grpc::ServerBuilder& builder) noexcept(false) {
-    // register service and start with completion queue
-    builder.RegisterService(&service);
+    builder.RegisterService(&service1);
 }
 
+/**
+ * @brief Mock implementation for request handler
+ *
+ * @param req
+ * @param res
+ * @return grpc::Status
+ */
 auto serve_request(v1::Request& req, v1::Response& res) -> grpc::Status {
     return grpc::Status::OK;
 }
 
 bool is_shutdowned() noexcept;
 
+/**
+ * @param queue
+ * @return rpc_routine_t
+ * @see service.proto
+ */
 auto serve_method1(grpc_server_queue_t& queue) noexcept(false)
     -> rpc_routine_t {
     auto on_return = gsl::finally([&]() {
@@ -123,8 +186,8 @@ auto serve_method1(grpc_server_queue_t& queue) noexcept(false)
     v1::Request req{};
 
     auto ok = co_await [&](coroutine_handle<void> coro) {
-        service.RequestMethod1(&ctx, &req, &responder, &queue, &queue,
-                               coro.address());
+        service1.RequestMethod1(&ctx, &req, &responder, &queue, &queue,
+                                coro.address());
     };
     if (ok == false)
         co_return;
@@ -138,6 +201,11 @@ auto serve_method1(grpc_server_queue_t& queue) noexcept(false)
     co_return;
 }
 
+/**
+ * @param queue
+ * @return rpc_routine_t
+ * @see service.proto
+ */
 auto serve_method2(grpc_server_queue_t& queue) noexcept(false)
     -> rpc_routine_t {
     auto on_return = gsl::finally([&]() {
@@ -150,8 +218,8 @@ auto serve_method2(grpc_server_queue_t& queue) noexcept(false)
     v1::Request req{};
 
     co_await [&](coroutine_handle<void> coro) {
-        service.RequestMethod2(&ctx, &req, &writer, &queue, &queue,
-                               coro.address());
+        service1.RequestMethod2(&ctx, &req, &writer, &queue, &queue,
+                                coro.address());
     };
 
     v1::Response res{};
@@ -169,6 +237,11 @@ auto serve_method2(grpc_server_queue_t& queue) noexcept(false)
     };
 }
 
+/**
+ * @param queue
+ * @return rpc_routine_t
+ * @see service.proto
+ */
 auto serve_method3(grpc_server_queue_t& queue) noexcept(false)
     -> rpc_routine_t {
     auto on_return = gsl::finally([&]() {
@@ -180,7 +253,7 @@ auto serve_method3(grpc_server_queue_t& queue) noexcept(false)
     ServerAsyncReader<v1::Response, v1::Request> reader{&ctx};
 
     co_await [&](coroutine_handle<void> coro) {
-        service.RequestMethod3(&ctx, &reader, &queue, &queue, coro.address());
+        service1.RequestMethod3(&ctx, &reader, &queue, &queue, coro.address());
     };
 
     v1::Request req{};
@@ -198,6 +271,11 @@ auto serve_method3(grpc_server_queue_t& queue) noexcept(false)
     };
 }
 
+/**
+ * @param queue
+ * @return rpc_routine_t
+ * @see service.proto
+ */
 auto serve_method4(grpc_server_queue_t& queue) noexcept(false)
     -> rpc_routine_t {
     auto on_return = gsl::finally([&]() {
@@ -209,7 +287,7 @@ auto serve_method4(grpc_server_queue_t& queue) noexcept(false)
     ServerAsyncReaderWriter<v1::Response, v1::Request> session{&ctx};
 
     co_await [&](coroutine_handle<void> coro) {
-        service.RequestMethod4(&ctx, &session, &queue, &queue, coro.address());
+        service1.RequestMethod4(&ctx, &session, &queue, &queue, coro.address());
     };
 
     v1::Request req{};

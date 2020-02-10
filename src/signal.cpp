@@ -1,6 +1,12 @@
-
+/**
+ * @file signal.cpp
+ * @author luncliff (luncliff@gmail.com)
+ * @brief Signal handling for the service module
+ * @details The signal is used for graceful shutdown of the service
+ * implementation
+ */
+// #include <cstdio>
 #include <csignal>
-#include <cstdio>
 
 volatile sig_atomic_t sig_status = 0;
 
@@ -10,7 +16,7 @@ bool is_signaled() noexcept {
 
 void on_signal_change_sig_status(sig_atomic_t signum) {
     sig_status = signum;
-    fprintf(stderr, "signal: %d \n", signum);
+    // fprintf(stderr, "signal: %d \n", signum);
 }
 
 void watch_signals() noexcept(false) {
