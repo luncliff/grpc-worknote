@@ -3,77 +3,90 @@ project(worknote LANGUAGES CXX VERSION 0.3)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CONAN_CMAKE_SILENT_OUTPUT true)
 include(GNUInstallDirs)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # see https://cmake.org/cmake/help/latest/module/FindProtobuf.html
-find_package(protobuf CONFIG REQUIRED)
-find_package(gRPC CONFIG REQUIRED)
+find_program(Protobuf_PROTOC_EXECUTABLE NAMES protoc REQUIRED)
+find_program(GRPC_CPP_PLUGIN_PROGRAM NAMES grpc_cpp_plugin REQUIRED)
+find_package(protobuf REQUIRED)
+find_package(gRPC REQUIRED)
 
-# see 'codegen_xx.cmake' files in cmake/
-# find protobuf compiler in vcpkg
-find_program(protoc_exe NAMES protoc REQUIRED)
+# run codegen for manual source update
+add_custom_target(codegen_cpp
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    SOURCES service.proto
+    COMMAND ${Protobuf_PROTOC_EXECUTABLE} --version
+    COMMAND ${Protobuf_PROTOC_EXECUTABLE} service.proto --cpp_out=src
+    COMMAND ${Protobuf_PROTOC_EXECUTABLE} service.proto --cpp_out=src --grpc_out=src --plugin="protoc-gen-grpc=${GRPC_CPP_PLUGIN_PROGRAM}"
+)
 
-list(APPEND hdrs
-    ${PROJECT_SOURCE_DIR}/static/service.pb.h
-    ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.h
-    ${PROJECT_SOURCE_DIR}/static/service.pb.cc
+list(APPEND codegen_hdrs
+    src/service.pb.h
+    src/service.grpc.pb.h
+)
+list(APPEND codegen_srcs
+    src/service.pb.cc
+    src/service.grpc.pb.cc
+)
+
+add_custom_command(OUTPUT ${codegen_hdrs} ${codegen_srcs}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    COMMAND ${Protobuf_PROTOC_EXECUTABLE} service.proto --cpp_out=src
+    COMMAND ${Protobuf_PROTOC_EXECUTABLE} service.proto --cpp_out=src --grpc_out=src --plugin="protoc-gen-grpc=${GRPC_CPP_PLUGIN_PROGRAM}"
 )
 
 add_library(protocol0 STATIC
-    signal.cpp
-    serve_queue.cpp
-    serve.cpp
-    ${hdrs}
-    ${PROJECT_SOURCE_DIR}/static/service.pb.cc
-    ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.cc
+    src/signal.cpp
+    src/serve_queue.cpp
+    src/serve.cpp
+    ${codegen_hdrs}
+    ${codegen_srcs}
 )
 
 set_target_properties(protocol0
-PROPERTIES
+    PROPERTIES
     PUBLIC_HEADER "${hdrs}"
 )
 
 target_include_directories(protocol0
-PUBLIC
+    PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/static>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_link_libraries(protocol0
-PUBLIC
+    PUBLIC
     protobuf::libprotobuf
     gRPC::grpc++
 )
 
 if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     target_compile_options(protocol0
-    PRIVATE
+        PRIVATE
         -fcoroutines-ts -stdlib=libc++
     )
 elseif(MSVC)
     target_compile_options(protocol0
-    PRIVATE
-        /std:c++17 /await
+        PRIVATE
+        /Zc:__cplusplus /await
     )
 endif()
-
 
 add_executable(service0
-    rpc_service.cpp  
+    tools/rpc_service.cpp
 )
 
-if(WIN32)
-    target_compile_definitions(service0
+target_link_libraries(service0
     PRIVATE
-        _WIN32_WINNT=0x0A00 # be explicit
-    )
-endif()
+    protocol0
+)
 
 install(TARGETS protocol0 service0
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )

@@ -174,8 +174,7 @@ bool is_shutdowned() noexcept;
  * @return rpc_routine_t
  * @see service.proto
  */
-auto serve_method1(grpc_server_queue_t& queue) noexcept(false)
-    -> rpc_routine_t {
+auto serve_method1(grpc_server_queue_t& queue) noexcept(false) -> rpc_routine_t {
     auto on_return = gsl::finally([&]() {
         if (is_shutdowned() == false)
             serve_method1(queue);
@@ -186,8 +185,7 @@ auto serve_method1(grpc_server_queue_t& queue) noexcept(false)
     v1::Request req{};
 
     auto ok = co_await [&](coroutine_handle<void> coro) {
-        service1.RequestMethod1(&ctx, &req, &responder, &queue, &queue,
-                                coro.address());
+        service1.RequestMethod1(&ctx, &req, &responder, &queue, &queue, coro.address());
     };
     if (ok == false)
         co_return;
@@ -195,9 +193,7 @@ auto serve_method1(grpc_server_queue_t& queue) noexcept(false)
     v1::Response res{};
     grpc::Status status = serve_request(req, res);
 
-    co_await [&](coroutine_handle<void> coro) {
-        responder.Finish(res, status, coro.address());
-    };
+    co_await [&](coroutine_handle<void> coro) { responder.Finish(res, status, coro.address()); };
     co_return;
 }
 
@@ -206,8 +202,7 @@ auto serve_method1(grpc_server_queue_t& queue) noexcept(false)
  * @return rpc_routine_t
  * @see service.proto
  */
-auto serve_method2(grpc_server_queue_t& queue) noexcept(false)
-    -> rpc_routine_t {
+auto serve_method2(grpc_server_queue_t& queue) noexcept(false) -> rpc_routine_t {
     auto on_return = gsl::finally([&]() {
         if (is_shutdowned() == false)
             serve_method2(queue);
@@ -218,8 +213,7 @@ auto serve_method2(grpc_server_queue_t& queue) noexcept(false)
     v1::Request req{};
 
     co_await [&](coroutine_handle<void> coro) {
-        service1.RequestMethod2(&ctx, &req, &writer, &queue, &queue,
-                                coro.address());
+        service1.RequestMethod2(&ctx, &req, &writer, &queue, &queue, coro.address());
     };
 
     v1::Response res{};
@@ -227,14 +221,10 @@ auto serve_method2(grpc_server_queue_t& queue) noexcept(false)
 
     auto repeat = 1u;
     while (repeat--) {
-        co_await [&](coroutine_handle<void> coro) {
-            writer.Write(res, coro.address());
-        };
+        co_await [&](coroutine_handle<void> coro) { writer.Write(res, coro.address()); };
     }
 
-    co_await [&](coroutine_handle<void> coro) {
-        writer.Finish(status, coro.address());
-    };
+    co_await [&](coroutine_handle<void> coro) { writer.Finish(status, coro.address()); };
 }
 
 /**
@@ -242,8 +232,7 @@ auto serve_method2(grpc_server_queue_t& queue) noexcept(false)
  * @return rpc_routine_t
  * @see service.proto
  */
-auto serve_method3(grpc_server_queue_t& queue) noexcept(false)
-    -> rpc_routine_t {
+auto serve_method3(grpc_server_queue_t& queue) noexcept(false) -> rpc_routine_t {
     auto on_return = gsl::finally([&]() {
         if (is_shutdowned() == false)
             serve_method3(queue);
@@ -252,23 +241,18 @@ auto serve_method3(grpc_server_queue_t& queue) noexcept(false)
     ServerContext ctx{};
     ServerAsyncReader<v1::Response, v1::Request> reader{&ctx};
 
-    co_await [&](coroutine_handle<void> coro) {
-        service1.RequestMethod3(&ctx, &reader, &queue, &queue, coro.address());
-    };
+    co_await
+        [&](coroutine_handle<void> coro) { service1.RequestMethod3(&ctx, &reader, &queue, &queue, coro.address()); };
 
     v1::Request req{};
     v1::Response res{};
     grpc::Status status{};
 
-    while (co_await [&](coroutine_handle<void> coro) {
-        reader.Read(&req, coro.address());
-    }) {
+    while (co_await [&](coroutine_handle<void> coro) { reader.Read(&req, coro.address()); }) {
         // will return the last one
         status = serve_request(req, res);
     }
-    co_await [&](coroutine_handle<void> coro) {
-        reader.Finish(res, status, coro.address());
-    };
+    co_await [&](coroutine_handle<void> coro) { reader.Finish(res, status, coro.address()); };
 }
 
 /**
@@ -276,8 +260,7 @@ auto serve_method3(grpc_server_queue_t& queue) noexcept(false)
  * @return rpc_routine_t
  * @see service.proto
  */
-auto serve_method4(grpc_server_queue_t& queue) noexcept(false)
-    -> rpc_routine_t {
+auto serve_method4(grpc_server_queue_t& queue) noexcept(false) -> rpc_routine_t {
     auto on_return = gsl::finally([&]() {
         if (is_shutdowned() == false)
             serve_method3(queue);
@@ -286,22 +269,17 @@ auto serve_method4(grpc_server_queue_t& queue) noexcept(false)
     ServerContext ctx{};
     ServerAsyncReaderWriter<v1::Response, v1::Request> session{&ctx};
 
-    co_await [&](coroutine_handle<void> coro) {
-        service1.RequestMethod4(&ctx, &session, &queue, &queue, coro.address());
-    };
+    co_await
+        [&](coroutine_handle<void> coro) { service1.RequestMethod4(&ctx, &session, &queue, &queue, coro.address()); };
 
     v1::Request req{};
     v1::Response res{};
     grpc::Status status{};
 
     // response for all successful read ...
-    while (co_await [&](coroutine_handle<void> coro) {
-        session.Read(&req, coro.address());
-    }) {
+    while (co_await [&](coroutine_handle<void> coro) { session.Read(&req, coro.address()); }) {
         status = serve_request(req, res);
-        co_await [&](coroutine_handle<void> coro) {
-            session.Write(res, coro.address());
-        };
+        co_await [&](coroutine_handle<void> coro) { session.Write(res, coro.address()); };
     }
 
     co_await [&](coroutine_handle<void> coro) {

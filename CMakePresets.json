@@ -34,7 +34,7 @@
         {
             "name": "x64-osx-debug",
             "displayName": "x64-osx/debug",
-            "generator": "Xcode",
+            "generator": "Ninja",
             "binaryDir": "${sourceDir}/build-x64-osx",
             "installDir": "${sourceDir}/install",
             "cacheVariables": {
