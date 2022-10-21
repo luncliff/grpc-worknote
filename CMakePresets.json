@@ -1,0 +1,108 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "x64-windows-debug",
+            "displayName": "x64(vs2022)/debug",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/build-x64-windows",
+            "installDir": "${sourceDir}/install/x64",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_SYSTEM_VERSION": "10.0.20348.0"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "x64-windows-release",
+            "displayName": "x64(vs2022)/release",
+            "inherits": "x64-windows-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "x64-osx-debug",
+            "displayName": "x64-osx/debug",
+            "generator": "Xcode",
+            "binaryDir": "${sourceDir}/build-x64-osx",
+            "installDir": "${sourceDir}/install",
+            "cacheVariables": {
+                "CMAKE_OSX_ARCHITECTURES": "x86_64",
+                "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "arm64-osx-debug",
+            "displayName": "arm64-osx/debug",
+            "inherits": "x64-osx-debug",
+            "cacheVariables": {
+                "CMAKE_OSX_ARCHITECTURES": "arm64",
+                "VCPKG_TARGET_TRIPLET": "arm64-osx"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "x64-windows-debug",
+            "configuration": "Debug",
+            "configurePreset": "x64-windows-debug"
+        },
+        {
+            "name": "x64-windows-release",
+            "configurePreset": "x64-windows-release",
+            "configuration": "Release"
+        },
+        {
+            "name": "x64-osx-debug",
+            "configurePreset": "x64-osx-debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "arm64-osx-debug",
+            "configurePreset": "arm64-osx-debug",
+            "configuration": "Debug"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "x64-windows-debug",
+            "configurePreset": "x64-windows-debug",
+            "configuration": "Debug",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "x64-osx-debug",
+            "configurePreset": "x64-osx-debug",
+            "configuration": "Debug",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "arm64-osx-debug",
+            "configurePreset": "arm64-osx-debug",
+            "configuration": "Debug",
+            "output": {
+                "outputOnFailure": true
+            }
+        }
+    ]
+}

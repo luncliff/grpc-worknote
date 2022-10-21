@@ -1,41 +1,79 @@
+cmake_minimum_required(VERSION 3.18)
+project(worknote LANGUAGES CXX VERSION 0.3)
 
-cmake_minimum_required(VERSION 3.14)
-project(worknote LANGUAGES CXX VERSION 0.2)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
+include(GNUInstallDirs)
 
-find_package(protobuf 3.10      CONFIG REQUIRED)
-find_package(gRPC     1.23      CONFIG REQUIRED)
-
-# run protobuf compiler and generate files
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-# new target 'vcpkg_meta'
-#   it makes libraries in vcpkg visible through 'target_link_libraries'
-include(vcpkg_meta)
+# see https://cmake.org/cmake/help/latest/module/FindProtobuf.html
+find_package(protobuf CONFIG REQUIRED)
+find_package(gRPC CONFIG REQUIRED)
 
 # see 'codegen_xx.cmake' files in cmake/
-set(VCPKG_TOOL_DIR ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools)
 # find protobuf compiler in vcpkg
-find_program(proto_compiler_path
-    NAMES   protoc.exe protoc
-    PATHS   ${VCPKG_TOOL_DIR}/protobuf
-    # NO_DEFAULT_PATH 
+find_program(protoc_exe NAMES protoc REQUIRED)
+
+list(APPEND hdrs
+    ${PROJECT_SOURCE_DIR}/static/service.pb.h
+    ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.h
+    ${PROJECT_SOURCE_DIR}/static/service.pb.cc
 )
-file(RELATIVE_PATH short_path ${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET} ${proto_compiler_path})
-message(STATUS "using protoc\t: ${short_path}")
-include(codegen_cpp)
-include(codegen_python)
-include(codegen_nodejs)
-include(codegen_csharp)
-if (DEFINED $ENV{GOPATH})
-    include(codegen_go)
+
+add_library(protocol0 STATIC
+    signal.cpp
+    serve_queue.cpp
+    serve.cpp
+    ${hdrs}
+    ${PROJECT_SOURCE_DIR}/static/service.pb.cc
+    ${PROJECT_SOURCE_DIR}/static/service.grpc.pb.cc
+)
+
+set_target_properties(protocol0
+PROPERTIES
+    PUBLIC_HEADER "${hdrs}"
+)
+
+target_include_directories(protocol0
+PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/static>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+target_link_libraries(protocol0
+PUBLIC
+    protobuf::libprotobuf
+    gRPC::grpc++
+)
+
+if(${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
+    target_compile_options(protocol0
+    PRIVATE
+        -fcoroutines-ts -stdlib=libc++
+    )
+elseif(MSVC)
+    target_compile_options(protocol0
+    PRIVATE
+        /std:c++17 /await
+    )
 endif()
 
-add_subdirectory(src)
-add_subdirectory(tools)
 
-install(TARGETS     rpc_impl 
-                    rpc_service
-        RUNTIME  DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-        # LIBRARY  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-        # ARCHIVE  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+add_executable(service0
+    rpc_service.cpp  
+)
+
+if(WIN32)
+    target_compile_definitions(service0
+    PRIVATE
+        _WIN32_WINNT=0x0A00 # be explicit
+    )
+endif()
+
+install(TARGETS protocol0 service0
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
