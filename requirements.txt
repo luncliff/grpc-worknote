@@ -1,8 +1,9 @@
 setuptools>=41.0.0
-
+conan
+cmake>=3.23.1
 # https://grpc.github.io/grpc/python/index.html
-protobuf==3.10
-grpcio==1.25 
+protobuf
+grpcio
 grpcio-tools
 
 # https://pypi.org/project/pytest-asyncio/

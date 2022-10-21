@@ -1,0 +1,63 @@
+
+jobs:
+  - job: vs2022_msvc143
+    pool:
+      vmImage: "windows-2022"
+    variables:
+      configuration: Debug
+      cmake.preset: x64-windows-debug
+    steps:
+      - task: UsePythonVersion@0
+        displayName: "Setup: Python 3.10"
+        inputs:
+          versionSpec: "3.10"
+          addToPath: true
+          architecture: "x64"
+      - powershell: pip install -r requirements.txt
+        displayName: "Install: Python packages"
+      - powershell: conan install . --build missing -if cmake
+        displayName: "Install: Conan packages"
+      - task: CMake@1
+        displayName: "CMake: Configure"
+        inputs:
+          cmakeArgs: --preset $(cmake.preset) -DCMAKE_INSTALL_PREFIX:PATH="$(Build.ArtifactStagingDirectory)"
+          workingDirectory: "."
+      - task: MSBuild@1
+        inputs:
+          solution: "build-x64-windows/worknote.sln"
+          msbuildArchitecture: x64
+          platform: x64
+          configuration: $(configuration)
+          msbuildArguments: "/p:platformtoolset=v143"
+      - task: CMake@1
+        displayName: "CMake: Install"
+        inputs:
+          cmakeArgs: --build --preset $(cmake.preset) --target install
+          workingDirectory: "."
+      # - powershell: ctest --preset $(cmake.preset) --output-on-failure
+      #   displayName: "CTest"
+
+  - job: macos11_appleclang
+    pool:
+      vmImage: "macos-11"
+    variables:
+      cmake.preset: x64-osx-debug
+    steps:
+      - powershell: brew install ninja conan python3
+        displayName: "Setup: Homebrew packages"
+      - powershell: pip install -r requirements.txt
+        displayName: "Install: Python packages"
+      - powershell: conan install . --build missing -if cmake
+        displayName: "Install: Conan packages"
+      - task: CMake@1
+        displayName: "CMake: Configure"
+        inputs:
+          cmakeArgs: --preset $(cmake.preset) -DCMAKE_INSTALL_PREFIX:PATH="$(Build.ArtifactStagingDirectory)"
+          workingDirectory: "."
+      - task: CMake@1
+        displayName: "CMake: Build/Install"
+        inputs:
+          cmakeArgs: --build --preset $(cmake.preset) --target install
+          workingDirectory: "."
+      # - powershell: ctest --preset $(cmake.preset) --output-on-failure
+      #   displayName: "CTest"

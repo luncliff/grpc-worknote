@@ -30,9 +30,7 @@ void drain_queue(grpc::CompletionQueue& cq) noexcept(false) {
  * @param deadline  time point to wakeup
  * @return false    Nothing happend
  */
-bool drain_queue(
-    grpc::CompletionQueue& cq,
-    std::chrono::system_clock::time_point deadline) noexcept(false) {
+bool drain_queue(grpc::CompletionQueue& cq, std::chrono::system_clock::time_point deadline) noexcept(false) {
     void* user_data = nullptr;
     bool ok = false;
 
