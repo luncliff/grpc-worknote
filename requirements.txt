@@ -1,7 +1,7 @@
 setuptools>=41.0.0
 
 # https://grpc.github.io/grpc/python/index.html
-protobuf==3.10
+protobuf==3.18.3
 grpcio==1.25 
 grpcio-tools
 
