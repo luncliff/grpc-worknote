@@ -7,8 +7,16 @@ jobs:
       configuration: Debug
       cmake.preset: x64-windows-debug
     steps:
+      - task: UsePythonVersion@0
+        displayName: "Setup: Python 3.10"
+        inputs:
+          versionSpec: "3.10"
+          addToPath: true
+          architecture: "x64"
+      - powershell: pip install -r requirements.txt
+        displayName: "Install: Python packages"
       - powershell: conan install . --build missing -if cmake
-        displayName: "Conan: install packages"
+        displayName: "Install: Conan packages"
       - task: CMake@1
         displayName: "CMake: Configure"
         inputs:
@@ -35,10 +43,12 @@ jobs:
     variables:
       cmake.preset: x64-osx-debug
     steps:
-      - powershell: brew install ninja conan
+      - powershell: brew install ninja conan python3
         displayName: "Setup: Homebrew packages"
+      - powershell: pip install -r requirements.txt
+        displayName: "Install: Python packages"
       - powershell: conan install . --build missing -if cmake
-        displayName: "Conan: install packages"
+        displayName: "Install: Conan packages"
       - task: CMake@1
         displayName: "CMake: Configure"
         inputs:
